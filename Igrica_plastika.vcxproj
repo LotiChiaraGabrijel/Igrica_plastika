@@ -71,8 +71,9 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\lotig\Downloads\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\lotig\Downloads\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\lotig\Downloads\SDL2-2.0.14\include;C:\Users\lotig\Downloads\SDL2_image-2.0.5\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\lotig\Downloads\SDL2-2.0.14\lib\x64;C:\Users\lotig\Downloads\SDL2_image-2.0.5\lib\x64;$(LibraryPath)</LibraryPath>
+    <ExternalIncludePath>C:\Users\lotig\Downloads\SDL2_image-2.0.5\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -106,13 +107,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\lotig\Downloads\SDL2-2.0.14\include</AdditionalIncludeDirectories>
-      <AdditionalUsingDirectories>C:\Users\lotig\Downloads\SDL2-2.0.14\include</AdditionalUsingDirectories>
+      <AdditionalIncludeDirectories>C:\Users\lotig\Downloads\SDL2-2.0.14\include;C:\Users\lotig\Downloads\SDL2_image-2.0.5\include</AdditionalIncludeDirectories>
+      <AdditionalUsingDirectories>C:\Users\lotig\Downloads\SDL2-2.0.14\include;C:\Users\lotig\Downloads\SDL2_image-2.0.5\include</AdditionalUsingDirectories>
+      <BasicRuntimeChecks>StackFrameRuntimeCheck</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,11 +137,13 @@
     <ClCompile Include="main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"C:\Users\lotig\Downloads\SDL3-devel-3.4.0-VC"</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="player.cpp" />
     <ClCompile Include="screen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="entity.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="screen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

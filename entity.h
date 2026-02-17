@@ -1,11 +1,12 @@
 #pragma once
 #include <SDL.h>
 class Entity {
-	int x, y, speed;
+
 	bool alive;
 public: 
 	Entity();
+	int x, y, speed;
 	void move();
-	void update();
-	void render();
+	virtual void update();
+	virtual void render();
 };
