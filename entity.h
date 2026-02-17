@@ -5,8 +5,8 @@ class Entity {
 	bool alive;
 public: 
 	Entity();
-	int x, y, speed;
+	float x, y, speed;
 	void move();
-	virtual void update();
+	virtual void update(float deltaTime);
 	virtual void render();
 };

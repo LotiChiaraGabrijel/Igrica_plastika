@@ -5,7 +5,7 @@ Entity::Entity() {
 void Entity::move() {
 
 }
-void Entity::update() {
+void Entity::update(float deltaTime) {
 
 }
 void Entity::render() {

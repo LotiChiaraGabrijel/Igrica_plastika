@@ -27,7 +27,11 @@ void Game::init() {
 }
 
 void Game::run() {
+    Uint32 startTime = SDL_GetTicks(), lastTime;
+    float deltaTime = 0;
     while (running) {
+        lastTime = startTime;
+        startTime = SDL_GetTicks();
         // Poll dogodki
         while (SDL_PollEvent(&ev)) {
             if (ev.type == SDL_QUIT)
@@ -39,7 +43,7 @@ void Game::run() {
         SDL_RenderClear(renderer);
 
         // Update in render player
-        player->update();
+        player->update((startTime - lastTime) / 1000.0f);
         player->render();
 
         // Future: render other entities, smeti, nasprotnike, zavezence itd.
