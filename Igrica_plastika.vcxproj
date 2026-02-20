@@ -134,15 +134,19 @@
   <ItemGroup>
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="gameScreen.cpp" />
     <ClCompile Include="main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"C:\Users\lotig\Downloads\SDL3-devel-3.4.0-VC"</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="mainMenuScreen.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="screen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="entity.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="gameScreen.h" />
+    <ClInclude Include="MainMenuScreen.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="screen.h" />
   </ItemGroup>

@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "player.h"
+#include "screen.h"
 class Game {
 	bool running;
     SDL_Window* window;
@@ -9,7 +10,7 @@ class Game {
     SDL_Renderer* renderer;
     SDL_Texture* testTexture;
     SDL_Rect destRect;
-    Player *player;
+    Screen* currentScreen;
 public:
     Game();
     void init();

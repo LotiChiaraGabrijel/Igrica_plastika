@@ -3,12 +3,13 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <iostream>
+#include "gameScreen.h"
+#include "MainMenuScreen.h"
 
 Game::Game() {
     running = false;
     window = nullptr;
     renderer = nullptr;
-    player = nullptr;
 }
 
 void Game::init() {
@@ -18,12 +19,10 @@ void Game::init() {
         1000, 800, 0);
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
+    currentScreen = new MainMenuScreen(renderer);
     running = true;
 
-    // Inicializacija Player-ja
-    player = new Player(renderer);      // ustvari Player z rendererjem
-    player->loadTexture();  // naloži Player PNG
+
 }
 
 void Game::run() {
@@ -34,7 +33,7 @@ void Game::run() {
         startTime = SDL_GetTicks();
         // Poll dogodki
         while (SDL_PollEvent(&ev)) {
-            if (ev.type == SDL_QUIT)
+            if (currentScreen->handleEvents(ev) == 0)
                 running = false;
         }
 
@@ -42,10 +41,19 @@ void Game::run() {
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
 
-        // Update in render player
-        player->update((startTime - lastTime) / 1000.0f);
-        player->render();
+        deltaTime = (startTime - lastTime) / 1000.0f;
+        currentScreen->update(deltaTime);
+        if (dynamic_cast<MainMenuScreen*>(currentScreen)) {
+            MainMenuScreen* menu = dynamic_cast<MainMenuScreen*>(currentScreen);
+            if (menu->get_start() == true)
+            {
+                delete currentScreen;
+                currentScreen = new GameScreen(renderer);
+                
+            }
 
+        }
+        currentScreen->render(renderer);
         // Future: render other entities, smeti, nasprotnike, zavezence itd.
 
         SDL_RenderPresent(renderer);
@@ -53,10 +61,9 @@ void Game::run() {
 }
 
 void Game::clean() {
-    delete player;
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-
+    delete currentScreen;
     IMG_Quit();
     SDL_Quit();
 }
