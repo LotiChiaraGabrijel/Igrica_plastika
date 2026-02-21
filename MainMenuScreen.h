@@ -8,6 +8,10 @@
 class MainMenuScreen : public Screen {
 	std::string name;
 	bool startGame;
+	SDL_Rect destRect;
+
+	SDL_Texture* background;
+
 public:
 	MainMenuScreen(SDL_Renderer*);
 	bool handleEvents(SDL_Event& e) override;

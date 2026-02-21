@@ -1,9 +1,14 @@
 #include "MainMenuScreen.h"
 #include <iostream>
-MainMenuScreen::MainMenuScreen(SDL_Renderer*) {
+#include <SDL_image.h>
+
+
+MainMenuScreen::MainMenuScreen(SDL_Renderer* renderer) {
 	SDL_StartTextInput();
 	startGame = false;
 	name = "";
+	background = IMG_LoadTexture(renderer, "C:\\Users\\lotig\\Downloads\\Igrica_plastika\\slike\\ozdadje_menu.png");
+
 }
 
 bool MainMenuScreen::handleEvents(SDL_Event& e) {
@@ -18,12 +23,17 @@ bool MainMenuScreen::handleEvents(SDL_Event& e) {
 	}
 		
 	if (e.type == SDL_QUIT) return 0;
+	return 1;
 }
 void MainMenuScreen::update(float deltaTime) {
 
 }
 void MainMenuScreen::render(SDL_Renderer* renderer) {
-
+	destRect.w = 1024;
+	destRect.h = 900;
+	destRect.x = 0;
+	destRect.y = 0;
+	SDL_RenderCopy(renderer, background, nullptr, &destRect);
 }
 MainMenuScreen::~MainMenuScreen() {
 	SDL_StopTextInput();

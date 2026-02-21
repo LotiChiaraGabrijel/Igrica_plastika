@@ -5,6 +5,8 @@
 #include <iostream>
 #include "gameScreen.h"
 #include "MainMenuScreen.h"
+#include <ctime>
+
 
 Game::Game() {
     running = false;
@@ -13,10 +15,12 @@ Game::Game() {
 }
 
 void Game::init() {
+    SDL_Init(SDL_INIT_VIDEO);
+    IMG_Init(IMG_INIT_PNG);
     // Ustvari okno in renderer
     window = SDL_CreateWindow("Igra Izbriši plastiko",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        1000, 800, 0);
+        1024, 900, 0);
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     currentScreen = new MainMenuScreen(renderer);
@@ -54,7 +58,6 @@ void Game::run() {
 
         }
         currentScreen->render(renderer);
-        // Future: render other entities, smeti, nasprotnike, zavezence itd.
 
         SDL_RenderPresent(renderer);
     }
