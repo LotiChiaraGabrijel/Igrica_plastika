@@ -9,4 +9,9 @@ public:
 	void move();
 	virtual void update(float deltaTime);
 	virtual void render();
+	virtual float get_x();
+	virtual float get_y();
+	virtual void set_x(float newX);
+	virtual void set_y(float newY);
+
 };
