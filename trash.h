@@ -4,20 +4,19 @@
 #include "entity.h"
 #include <cstdlib>
 
+class Trash : public Entity {
 
-class Ship : public Entity {
 	SDL_Renderer* renderer;
 	SDL_Texture* texture;
 	SDL_Rect destRect;
+	float moveX,
+		moveY;
 public:
-	Ship(SDL_Renderer* rend);
-	~Ship();
+	Trash(SDL_Renderer* rend);
+	~Trash();
 	void update(float deltaTime) override;
 	void render() override;
 	void loadTexture();
-	float get_x() override;
-	float get_y() override;
 	void set_x(float newX) override;
 	void set_y(float newY) override;
 };
-
