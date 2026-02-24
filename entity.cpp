@@ -24,3 +24,6 @@ void Entity::set_x(float newX) {
 void Entity::set_y(float newY) {
 	y = newY;
 }
+SDL_Rect Entity::get_rect() {
+	return destRect;
+}

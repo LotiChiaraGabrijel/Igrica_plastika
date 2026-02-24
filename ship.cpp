@@ -35,10 +35,9 @@ void Ship::update(float deltaTime) {
 	if (state[SDL_SCANCODE_D])
 		x += speed * deltaTime;
 
-	if (x < 0) x = 0;
-	if (y < 0) y = 0;
-	if (x > 1024 - 100) x = 1024 - 100;
-	if (y > 900 - 100) y = 900 - 100;
+	if (x < -25) x = -25;
+	if (x > 950) x = 950;
+	if (y > 825) y = 825;
 }
 Ship::~Ship() {
 	if (texture)
@@ -56,4 +55,7 @@ void Ship::set_x(float newX) {
 }
 void Ship::set_y(float newY) {
 	y = newY;
+}
+SDL_Rect Ship::get_rect() {
+	return destRect;
 }

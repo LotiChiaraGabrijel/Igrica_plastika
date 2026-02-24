@@ -38,10 +38,9 @@ void Player::update(float deltaTime) {
 	if (state[SDL_SCANCODE_D])
 		x += speed * deltaTime;
 
-	if (x < 0) x = 0;
-	if (y < 0) y = 0;
-	if (x > 1024-100) x = 1024-100;
-	if (y > 900-100) y = 900-100;
+	if (x < -25) x = -25;
+	if (y < -25) y = -25;
+	if (x > 950) x = 950;
 }
 void Player::render() {
 	destRect.x = x;
@@ -61,4 +60,7 @@ void Player::set_x(float newX) {
 }
 void Player::set_y(float newY) {
 	y = newY;
+}
+SDL_Rect Player::get_rect() {
+	return destRect;
 }

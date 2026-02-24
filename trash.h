@@ -5,7 +5,7 @@
 #include <cstdlib>
 
 class Trash : public Entity {
-
+	bool alive;
 	SDL_Renderer* renderer;
 	SDL_Texture* texture;
 	SDL_Rect destRect;
@@ -19,4 +19,6 @@ public:
 	void loadTexture();
 	void set_x(float newX) override;
 	void set_y(float newY) override;
+	void set_alive(bool x);
+	SDL_Rect get_rect() override;
 };

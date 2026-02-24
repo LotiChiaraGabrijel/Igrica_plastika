@@ -17,5 +17,6 @@ public:
 	void loadTexture();
 	void set_x(float newX) override;
 	void set_y(float newY) override;
+	SDL_Rect get_rect() override;
 
 };

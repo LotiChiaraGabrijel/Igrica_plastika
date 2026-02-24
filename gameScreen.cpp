@@ -8,6 +8,7 @@ GameScreen::GameScreen(SDL_Renderer* renderer) {
 	player->loadTexture();  
 	ship->loadTexture();
 	change = player;
+	score = 0;
 	onWater = false;
 	wasOnWater = false;
 	surface = IMG_Load("C:\\Users\\lotig\\Downloads\\Igrica_plastika\\slike\\mask.png");
@@ -47,9 +48,15 @@ void GameScreen::update(float deltaTime) {
 	int checkX = change->get_x() + 50;
 	int checkY = change->get_y() + 99;
 
-
 	if (is_on_water(checkX, checkY))
+	{
 		onWater = true;
+		for (int i = 0; i < 10; i++) 
+			if (check_collision(trash_arr[i]->get_rect(), change->get_rect()))
+				trash_arr[i]->set_alive(false);
+		
+
+	}
 	else
 		onWater = false;
 
@@ -63,18 +70,22 @@ void GameScreen::update(float deltaTime) {
 			change = ship;
 		}
 
-	else
-	{
-		player->set_x(ship->get_x());
-		player->set_y(ship->get_y());
-		change = player;
-	}
+		else
+		{
+			player->set_x(ship->get_x());
+			player->set_y(ship->get_y());
+			change = player;
+		}
 		wasOnWater = onWater;
 	}
 
+	}
+				
 
 	
-}
+
+	
+
 
 bool GameScreen::is_on_water(int x, int y) {
 	if (x < 0) x = 0;
@@ -104,3 +115,11 @@ void GameScreen::render(SDL_Renderer* renderer) {
 	for (int i = 0; i < 10; i++)
 		trash_arr[i]->render();
 }
+
+bool GameScreen::check_collision(SDL_Rect a, SDL_Rect b) {
+	if (a.x + a.w/2 <= b.x) return false;
+	if (a.x >= b.x + b.w / 2) return false;
+	if (a.y + a.h / 2 <= b.y) return false;
+	if (a.y >= b.y + b.h / 2) return false;
+	return true;
+} 

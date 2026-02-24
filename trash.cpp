@@ -7,6 +7,7 @@ Trash::Trash(SDL_Renderer* rend) {
 	renderer = rend;
 	moveX = 0;
 	moveY = 0;
+	alive = true;
 }
 void Trash::loadTexture() {
 	texture = IMG_LoadTexture(renderer, "C:\\Users\\lotig\\Downloads\\Igrica_plastika\\slike\\trash.png");
@@ -21,7 +22,8 @@ void Trash::update(float deltaTime) {
 }
 
 void Trash::render() {
-	SDL_RenderCopy(renderer, texture, nullptr, &destRect);
+	if (alive == true)
+		SDL_RenderCopy(renderer, texture, nullptr, &destRect);
 
 }
 
@@ -34,4 +36,10 @@ void Trash::set_x(float newX) {
 }
 void Trash::set_y(float newY) {
 	y = newY;
+}
+void Trash::set_alive(bool x) {
+	alive = x;
+}
+SDL_Rect Trash::get_rect() {
+	return destRect;
 }
