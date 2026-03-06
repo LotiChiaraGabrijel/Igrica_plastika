@@ -1,22 +1,25 @@
 #pragma once
-#include <SDL_image.h>
-#include <SDL.h>
 #include "entity.h"
+#include <SDL.h>
+#include <SDL_image.h>
 #include <cstdlib>
 
-class Trash : public Entity {
+class Enemy : public Entity {
 	SDL_Renderer* renderer;
 	SDL_Texture* texture;
 	SDL_Rect destRect;
+	SDL_Surface* mask_surface;
 	bool alive;
+
 public:
-	Trash(SDL_Renderer* rend);
-	~Trash();
+	Enemy(SDL_Renderer* rend, SDL_Surface* surface);
+	~Enemy();
 	void update(float deltaTime) override;
 	void render() override;
 	void loadTexture();
+	float get_x() override;
+	float get_y() override;
 	void set_x(float newX) override;
 	void set_y(float newY) override;
-	void set_alive(bool x);
 	SDL_Rect get_rect() override;
 };

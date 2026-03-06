@@ -5,6 +5,7 @@
 #include <SDL_image.h>
 #include "ship.h"
 #include "trash.h"
+#include "enemy.h"
 
 //game screen header
 class GameScreen : public Screen {
@@ -16,6 +17,7 @@ class GameScreen : public Screen {
 	int score;
 	SDL_Surface* surface;
 	Trash* trash_arr[10];
+	Enemy* enemy_arr[10];
 	bool onWater,
 		wasOnWater;
 

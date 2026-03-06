@@ -5,7 +5,7 @@
 GameScreen::GameScreen(SDL_Renderer* renderer) {
 	player = new Player(renderer);
 	ship = new Ship(renderer);
-	player->loadTexture();  
+	player->loadTexture();
 	ship->loadTexture();
 	change = player;
 	score = 0;
@@ -16,26 +16,35 @@ GameScreen::GameScreen(SDL_Renderer* renderer) {
 	background = IMG_LoadTexture(renderer, "C:\\Users\\lotig\\Downloads\\Igrica_plastika\\slike\\background.png");
 	for (int i = 0; i < 10; i++) {
 		trash_arr[i] = new Trash(renderer);
+		enemy_arr[i] = new Enemy(renderer, surface);
 		int checkX, checkY;
-		do
-		{
-			checkX = rand() % 975 + 50;
+		do {
+			checkX = rand() % 924 + 50;
 			checkY = rand() % 850 + 50;
 			trash_arr[i]->set_x(checkX);
 			trash_arr[i]->set_y(checkY);
-		} while (is_on_water(checkX, checkY) == false);
+		} while (is_on_water(checkX+25, checkY) == false);
+		do {
+			checkX = rand() % 975 + 50;
+			checkY = rand() % 450 + 50;
+			enemy_arr[i]->set_x(checkX);
+			enemy_arr[i]->set_y(checkY);
+		} while (is_on_water(checkX+25, checkY+ 49) == true && is_on_water(checkX, checkY + 49) ==
+			true && is_on_water(checkX + 49, checkY + 49) == true);
 		trash_arr[i]->loadTexture();
+		enemy_arr[i]->loadTexture();
 	}
-	
+
 
 }
-GameScreen::~GameScreen(){
+GameScreen::~GameScreen() {
 	delete ship;
 	delete player;
 	SDL_FreeSurface(surface);
 	SDL_DestroyTexture(background);
 	for (int i = 0; i < 10; i++) {
 		delete trash_arr[i];
+		delete enemy_arr[i];
 	}
 }
 bool GameScreen::handleEvents(SDL_Event& e) {
@@ -51,10 +60,10 @@ void GameScreen::update(float deltaTime) {
 	if (is_on_water(checkX, checkY))
 	{
 		onWater = true;
-		for (int i = 0; i < 10; i++) 
+		for (int i = 0; i < 10; i++)
 			if (check_collision(trash_arr[i]->get_rect(), change->get_rect()))
 				trash_arr[i]->set_alive(false);
-		
+
 
 	}
 	else
@@ -79,19 +88,19 @@ void GameScreen::update(float deltaTime) {
 		wasOnWater = onWater;
 	}
 
-	}
-				
+}
 
-	
 
-	
+
+
+
 
 
 bool GameScreen::is_on_water(int x, int y) {
 	if (x < 0) x = 0;
-	else if (x > surface->w - 99) x = surface->w - 99;
+	else if (x > surface->w) x = surface->w - 1;
 	if (y < 0) y = 0;
-	else if (y > surface->h - 99) y = surface->h - 99;
+	else if (y > surface->h) y = surface->h - 1;
 	Uint8* pixels = (Uint8*)surface->pixels;
 	int pitch = surface->pitch;
 	int bytesPerPixel = surface->format->BytesPerPixel;
@@ -105,7 +114,7 @@ bool GameScreen::is_on_water(int x, int y) {
 }
 
 void GameScreen::render(SDL_Renderer* renderer) {
-	
+
 	destRect.w = 1024;
 	destRect.h = 900;
 	destRect.x = 0;
@@ -113,13 +122,17 @@ void GameScreen::render(SDL_Renderer* renderer) {
 	SDL_RenderCopy(renderer, background, nullptr, &destRect);
 	change->render();
 	for (int i = 0; i < 10; i++)
+	{
 		trash_arr[i]->render();
+		enemy_arr[i]->render();
+
+	}
 }
 
 bool GameScreen::check_collision(SDL_Rect a, SDL_Rect b) {
-	if (a.x + a.w/2 <= b.x) return false;
+	if (a.x + a.w / 2 <= b.x) return false;
 	if (a.x >= b.x + b.w / 2) return false;
 	if (a.y + a.h / 2 <= b.y) return false;
 	if (a.y >= b.y + b.h / 2) return false;
 	return true;
-} 
+}

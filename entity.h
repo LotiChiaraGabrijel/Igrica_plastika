@@ -2,8 +2,8 @@
 #include <SDL.h>
 class Entity {
 	SDL_Rect destRect;
-
 	bool alive;
+	
 public: 
 	Entity();
 	float x, y, speed;

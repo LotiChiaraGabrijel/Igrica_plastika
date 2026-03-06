@@ -5,8 +5,6 @@ Trash::Trash(SDL_Renderer* rend) {
 	speed = 400;
 	texture = nullptr;
 	renderer = rend;
-	moveX = 0;
-	moveY = 0;
 	alive = true;
 }
 void Trash::loadTexture() {
@@ -33,9 +31,13 @@ Trash::~Trash() {
 }
 void Trash::set_x(float newX) {
 	x = newX;
+	destRect.x = x;
+
 }
 void Trash::set_y(float newY) {
 	y = newY;
+	destRect.y = y;
+
 }
 void Trash::set_alive(bool x) {
 	alive = x;
