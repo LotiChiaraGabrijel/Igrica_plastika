@@ -20,6 +20,8 @@ void Trash::update(float deltaTime) {
 }
 
 void Trash::render() {
+	destRect.x = x;
+	destRect.y = y;
 	if (alive == true)
 		SDL_RenderCopy(renderer, texture, nullptr, &destRect);
 

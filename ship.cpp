@@ -44,12 +44,7 @@ Ship::~Ship() {
 		SDL_DestroyTexture(texture);
 }
 
-float Ship::get_x() {
-	return x;
-}
-float Ship::get_y() {
-	return y;
-}
+
 void Ship::set_x(float newX) {
 	x = newX;
 }

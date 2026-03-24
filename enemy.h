@@ -10,6 +10,7 @@ class Enemy : public Entity {
 	SDL_Rect destRect;
 	SDL_Surface* mask_surface;
 	bool alive;
+	bool xdir, ydir;
 
 public:
 	Enemy(SDL_Renderer* rend, SDL_Surface* surface);
@@ -17,9 +18,8 @@ public:
 	void update(float deltaTime) override;
 	void render() override;
 	void loadTexture();
-	float get_x() override;
-	float get_y() override;
 	void set_x(float newX) override;
 	void set_y(float newY) override;
 	SDL_Rect get_rect() override;
+	void change_dir();
 };

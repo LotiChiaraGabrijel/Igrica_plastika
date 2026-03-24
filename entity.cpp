@@ -26,3 +26,13 @@ void Entity::set_y(float newY) {
 SDL_Rect Entity::get_rect() {
 	return destRect;
 }
+
+
+
+bool Entity::check_collision(SDL_Rect a) {
+	if (destRect.x + destRect.w / 2 <= a.x) return false;
+	if (destRect.x >= a.x + a.w / 2) return false;
+	if (destRect.y + destRect.h / 2 <= a.y) return false;
+	if (destRect.y >= a.y + a.h / 2) return false;
+	return true;
+}
