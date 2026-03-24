@@ -29,27 +29,6 @@ void Enemy::render() {
 		SDL_RenderCopy(renderer, texture, nullptr, &destRect);
 }
 
-float Enemy::get_x() {
-	return x;
-}
-
-float Enemy::get_y() {
-	return y;
-}
-
-void Enemy::set_x(float newX) {
-	x = newX;
-	destRect.x = x;
-
-}
-void Enemy::set_y(float newY) {
-	y = newY;
-	destRect.y = y;
-
-}
-SDL_Rect Enemy::get_rect() {
-	return destRect;
-}
 
 Enemy::~Enemy() {
 	if (texture)
