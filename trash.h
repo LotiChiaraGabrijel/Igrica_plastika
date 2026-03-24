@@ -15,8 +15,6 @@ public:
 	void update(float deltaTime) override;
 	void render() override;
 	void loadTexture();
-	void set_x(float newX) override;
-	void set_y(float newY) override;
+	
 	void set_alive(bool x);
-	SDL_Rect get_rect() override;
 };
