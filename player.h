@@ -10,11 +10,9 @@ class Player : public Entity {
 public:
 	Player(SDL_Renderer* rend);
 	~Player();
-	float get_x() override;
-	float get_y() override;
+	
 	void update(float deltaTime) override;
 	void render() override;
 	void loadTexture();
-	void set_x(float newX) override;
-	void set_y(float newY) override;
+
 };
