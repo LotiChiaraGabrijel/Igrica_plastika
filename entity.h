@@ -10,10 +10,10 @@ public:
 	void move();
 	virtual void update(float deltaTime);
 	virtual void render();
-	virtual float get_x();
-	virtual float get_y();
-	virtual void set_x(float newX);
-	virtual void set_y(float newY);
-	virtual SDL_Rect get_rect();
+	 float get_x();
+	 float get_y();
+	 void set_x(float newX);
+	 void set_y(float newY);
+	SDL_Rect get_rect();
 
 };
