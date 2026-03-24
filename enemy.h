@@ -18,6 +18,5 @@ public:
 	void update(float deltaTime) override;
 	void render() override;
 	void loadTexture();
-
 	void change_dir();
 };

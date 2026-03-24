@@ -53,15 +53,30 @@ bool GameScreen::handleEvents(SDL_Event& e) {
 }
 void GameScreen::update(float deltaTime) {
 	change->update(deltaTime);
+	int checkX, checkY;
+	for (int i = 0; i < 10; i++) {
+		float oldX = enemy_arr[i]->get_x(),
+			oldY = enemy_arr[i]->get_y();
+		enemy_arr[i]->update(deltaTime);
 
-	int checkX = change->get_x() + 50;
-	int checkY = change->get_y() + 99;
+		checkX = enemy_arr[i]->get_x();
+		checkY = enemy_arr[i]->get_y();
+		if (is_on_water(checkX + 25, checkY + 75)) {
+			enemy_arr[i]->set_x(oldX);
+			enemy_arr[i]->set_y(oldY);
+			enemy_arr[i]->change_dir();
+		}
+	}
+
+
+	checkX = change->get_x() + 50;
+	checkY = change->get_y() + 99;
 
 	if (is_on_water(checkX, checkY))
 	{
 		onWater = true;
 		for (int i = 0; i < 10; i++)
-			if (check_collision(trash_arr[i]->get_rect(), change->get_rect()))
+			if (change->check_collision(trash_arr[i]->get_rect()))
 				trash_arr[i]->set_alive(false);
 
 
@@ -128,11 +143,11 @@ void GameScreen::render(SDL_Renderer* renderer) {
 
 	}
 }
-
+/*
 bool GameScreen::check_collision(SDL_Rect a, SDL_Rect b) {
 	if (a.x + a.w / 2 <= b.x) return false;
 	if (a.x >= b.x + b.w / 2) return false;
 	if (a.y + a.h / 2 <= b.y) return false;
 	if (a.y >= b.y + b.h / 2) return false;
 	return true;
-}
+}*/

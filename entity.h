@@ -3,9 +3,10 @@
 class Entity {
 protected:
 	SDL_Rect destRect;
+	float x, y, speed;
 public: 
 	Entity();
-	float x, y, speed;
+	
 	void move();
 	virtual void update(float deltaTime);
 	virtual void render();
