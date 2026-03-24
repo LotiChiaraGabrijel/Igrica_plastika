@@ -23,80 +23,70 @@ GameScreen::GameScreen(SDL_Renderer* renderer) {
 			checkY = rand() % 850 + 50;
 			trash_arr[i]->set_x(checkX);
 			trash_arr[i]->set_y(checkY);
-		} while (is_on_water(checkX+25, checkY) == false);
+		} while (is_on_water(checkX + 25, checkY) == false);
 		do {
 			checkX = rand() % 975 + 50;
 			checkY = rand() % 450 + 50;
 			enemy_arr[i]->set_x(checkX);
 			enemy_arr[i]->set_y(checkY);
-		} while (is_on_water(checkX+25, checkY+ 49) == true || is_on_water(checkX, checkY + 49) ==
-			true || is_on_water(checkX + 49, checkY + 49) == true
-			|| is_on_water(checkX + 25, checkY + 25));
+		} while (is_on_water(checkX + 25, checkY + 49) == true && is_on_water(checkX, checkY + 49) ==
+			true && is_on_water(checkX + 49, checkY + 49) == true);
 		trash_arr[i]->loadTexture();
 		enemy_arr[i]->loadTexture();
 	}
 
 
 }
-
+GameScreen::~GameScreen() {
+	delete ship;
+	delete player;
+	SDL_FreeSurface(surface);
+	SDL_DestroyTexture(background);
+	for (int i = 0; i < 10; i++) {
+		delete trash_arr[i];
+		delete enemy_arr[i];
+	}
+}
 bool GameScreen::handleEvents(SDL_Event& e) {
 	if (e.type == SDL_QUIT) return 0;
 	return 1;
 }
-
 void GameScreen::update(float deltaTime) {
-	int checkX, checkY;
 	change->update(deltaTime);
-	for (int i = 0; i < 10; i++) {
-		float oldX = enemy_arr[i]->get_x(),
-		oldY = enemy_arr[i]->get_y();
-		enemy_arr[i]->update(deltaTime);
 
-		checkX = enemy_arr[i]->get_x();
-		checkY = enemy_arr[i]->get_y();
-		if (is_on_water(checkX + 25, checkY + 49) == true || is_on_water(checkX, checkY + 49) ==
-			true || is_on_water(checkX + 49, checkY + 49) == true
-			|| is_on_water(checkX + 25, checkY + 25) || is_on_water(checkX + 49, checkY + 25)
-			|| is_on_water(checkX, checkY + 25)
-			|| is_on_water(checkX + 49, checkY) || is_on_water(checkX, checkY) 
-			|| is_on_water(checkX + 25, checkY)) {
-			enemy_arr[i]->set_x(oldX);
-			enemy_arr[i]->set_y(oldY);
-			enemy_arr[i]->change_dir();
-		}
-		
+	int checkX = change->get_x() + 50;
+	int checkY = change->get_y() + 99;
 
-	}
-	checkX = change->get_x() + 50;
-	checkY = change->get_y() + 99;
-
-	if (is_on_water(checkX, checkY)) {
+	if (is_on_water(checkX, checkY))
+	{
 		onWater = true;
 		for (int i = 0; i < 10; i++)
-		{
-			if (change->check_collision(trash_arr[i]->get_rect()))
+			if (check_collision(trash_arr[i]->get_rect(), change->get_rect()))
 				trash_arr[i]->set_alive(false);
-		}
+
+
 	}
 	else
 		onWater = false;
 
-	if (onWater != wasOnWater) {
-		if (onWater == true) {
+	if (onWater != wasOnWater)
+	{
+		if (onWater == true)
+		{
 
 			ship->set_x(player->get_x());
 			ship->set_y(player->get_y());
 			change = ship;
 		}
 
-		else {
+		else
+		{
 			player->set_x(ship->get_x());
 			player->set_y(ship->get_y());
 			change = player;
 		}
 		wasOnWater = onWater;
 	}
-
 
 }
 
@@ -108,9 +98,9 @@ void GameScreen::update(float deltaTime) {
 
 bool GameScreen::is_on_water(int x, int y) {
 	if (x < 0) x = 0;
-	else if (x > surface->w-1) x = surface->w-1;
+	else if (x > surface->w) x = surface->w - 1;
 	if (y < 0) y = 0;
-	else if (y > surface->h-1) y = surface->h-1;
+	else if (y > surface->h) y = surface->h - 1;
 	Uint8* pixels = (Uint8*)surface->pixels;
 	int pitch = surface->pitch;
 	int bytesPerPixel = surface->format->BytesPerPixel;
@@ -138,13 +128,11 @@ void GameScreen::render(SDL_Renderer* renderer) {
 
 	}
 }
-GameScreen::~GameScreen() {
-	delete ship;
-	delete player;
-	SDL_FreeSurface(surface);
-	SDL_DestroyTexture(background);
-	for (int i = 0; i < 10; i++) {
-		delete trash_arr[i];
-		delete enemy_arr[i];
-	}
+
+bool GameScreen::check_collision(SDL_Rect a, SDL_Rect b) {
+	if (a.x + a.w / 2 <= b.x) return false;
+	if (a.x >= b.x + b.w / 2) return false;
+	if (a.y + a.h / 2 <= b.y) return false;
+	if (a.y >= b.y + b.h / 2) return false;
+	return true;
 }

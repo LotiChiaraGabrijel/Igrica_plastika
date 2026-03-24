@@ -45,12 +45,3 @@ Ship::~Ship() {
 }
 
 
-void Ship::set_x(float newX) {
-	x = newX;
-}
-void Ship::set_y(float newY) {
-	y = newY;
-}
-SDL_Rect Ship::get_rect() {
-	return destRect;
-}

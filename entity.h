@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL.h>
 class Entity {
+protected:
 	SDL_Rect destRect;
 public: 
 	Entity();
@@ -10,9 +11,9 @@ public:
 	virtual void render();
 	float get_x();
 	float get_y();
-	virtual void set_x(float newX);
-	virtual void set_y(float newY);
-	virtual SDL_Rect get_rect();
+	void set_x(float newX);
+	void set_y(float newY);
+	SDL_Rect get_rect();
 	bool check_collision(SDL_Rect a);
 
 };

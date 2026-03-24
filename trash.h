@@ -7,7 +7,6 @@
 class Trash : public Entity {
 	SDL_Renderer* renderer;
 	SDL_Texture* texture;
-	SDL_Rect destRect;
 	bool alive;
 public:
 	Trash(SDL_Renderer* rend);
@@ -15,8 +14,7 @@ public:
 	void update(float deltaTime) override;
 	void render() override;
 	void loadTexture();
-	void set_x(float newX) override;
-	void set_y(float newY) override;
+
 	void set_alive(bool x);
-	SDL_Rect get_rect() override;
+
 };

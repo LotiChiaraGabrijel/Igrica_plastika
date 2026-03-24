@@ -49,12 +49,3 @@ void Player::render() {
 
 }
 
-void Player::set_x(float newX) {
-	x = newX;
-}
-void Player::set_y(float newY) {
-	y = newY;
-}
-SDL_Rect Player::get_rect() {
-	return destRect;
-}

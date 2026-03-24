@@ -27,5 +27,6 @@ public:
 	void update(float deltaTime) override;
 	void render(SDL_Renderer* renderer) override;
 	bool is_on_water(int x, int y);
+	bool check_collision(SDL_Rect a, SDL_Rect b);
 	~GameScreen();
 };
