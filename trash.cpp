@@ -29,19 +29,8 @@ Trash::~Trash() {
 	if (texture)
 		SDL_DestroyTexture(texture);
 }
-void Trash::set_x(float newX) {
-	x = newX;
-	destRect.x = x;
 
-}
-void Trash::set_y(float newY) {
-	y = newY;
-	destRect.y = y;
-
-}
 void Trash::set_alive(bool x) {
 	alive = x;
 }
-SDL_Rect Trash::get_rect() {
-	return destRect;
-}
+
