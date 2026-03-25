@@ -2,10 +2,12 @@
 Trash::Trash(SDL_Renderer* rend) {
 	x = 0;
 	y = 0;
-	speed = 400;
+	speed = 50;
 	texture = nullptr;
 	renderer = rend;
 	alive = true;
+	xdir = 1;
+	ydir = 1;
 }
 void Trash::loadTexture() {
 	texture = IMG_LoadTexture(renderer, "C:\\Users\\lotig\\Downloads\\Igrica_plastika\\slike\\trash.png");
@@ -16,6 +18,22 @@ void Trash::loadTexture() {
 }
 
 void Trash::update(float deltaTime) {
+	int dir = rand() % 1000;
+	if (dir == 1) xdir = !xdir;
+	dir = rand() % 1000;
+	if (dir == 1) ydir = !ydir;
+	if (xdir == 1)
+		x += deltaTime * speed;
+	else
+		x -= deltaTime * speed;
+	if (ydir == 1)
+		y += deltaTime * speed;
+	else
+		y -= deltaTime * speed;
+
+	if (x < -25) x = -25;
+	if (x > 950) x = 950;
+	if (y > 825) y = 825;
 
 }
 
@@ -34,4 +52,12 @@ Trash::~Trash() {
 
 void Trash::set_alive(bool x) {
 	alive = x;
+}
+
+bool Trash::get_alive() {
+	return alive;
+}
+
+void Trash::change_dir() {
+	ydir = !ydir;
 }

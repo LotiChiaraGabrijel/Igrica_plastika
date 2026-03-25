@@ -23,10 +23,10 @@ void Enemy::loadTexture() {
 }
 
 void Enemy::update(float deltaTime) {
-	int change_dir = rand() % 600;
-	if (change_dir == 1) xdir = !xdir;
-	change_dir = rand() % 600;
-	if (change_dir == 1) ydir = !ydir;
+	int dir = rand() % 600;
+	if (dir == 1) xdir = !xdir;
+	dir = rand() % 600;
+	if (dir == 1) ydir = !ydir;
 	if (xdir == 1)
 		x += deltaTime * speed;
 	else
@@ -55,9 +55,15 @@ void Enemy::change_dir() {
 	ydir = !ydir;
 }
 
-
+void Enemy::set_alive(bool x) {
+	alive = x;
+}
 
 Enemy::~Enemy() {
 	if (texture)
 		SDL_DestroyTexture(texture);
+}
+
+bool Enemy::get_alive() {
+	return alive;
 }

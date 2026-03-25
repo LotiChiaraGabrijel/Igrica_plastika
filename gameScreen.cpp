@@ -55,6 +55,7 @@ void GameScreen::update(float deltaTime) {
 	change->update(deltaTime);
 	int checkX, checkY;
 	for (int i = 0; i < 10; i++) {
+		//check enemy on water
 		float oldX = enemy_arr[i]->get_x(),
 			oldY = enemy_arr[i]->get_y();
 		enemy_arr[i]->update(deltaTime);
@@ -66,23 +67,42 @@ void GameScreen::update(float deltaTime) {
 			enemy_arr[i]->set_y(oldY);
 			enemy_arr[i]->change_dir();
 		}
+
+		oldX = trash_arr[i]->get_x(),
+		oldY = trash_arr[i]->get_y();
+		trash_arr[i]->update(deltaTime);
+		checkX = trash_arr[i]->get_x();
+		checkY = trash_arr[i]->get_y();
+		if (is_on_water(checkX + 25, checkY + 75) == false) {
+			trash_arr[i]->set_x(oldX);
+			trash_arr[i]->set_y(oldY);
+			trash_arr[i]->change_dir();
+		}
 	}
 
 
 	checkX = change->get_x() + 50;
 	checkY = change->get_y() + 99;
-
 	if (is_on_water(checkX, checkY))
 	{
 		onWater = true;
 		for (int i = 0; i < 10; i++)
-			if (change->check_collision(trash_arr[i]->get_rect()))
+			if (change->check_collision(trash_arr[i]->get_rect()) && trash_arr[i]->get_alive() == true) {
+				score += 10;
 				trash_arr[i]->set_alive(false);
+			}
 
 
 	}
 	else
+	{
 		onWater = false;
+		for (int i = 0; i < 10; i++)
+			if (change->check_collision(enemy_arr[i]->get_rect()) && enemy_arr[i]->get_alive() == true) {
+				score += 10;
+				enemy_arr[i]->set_alive(false);
+			}
+	}
 
 	if (onWater != wasOnWater)
 	{

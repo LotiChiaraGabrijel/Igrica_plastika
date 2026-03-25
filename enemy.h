@@ -19,4 +19,6 @@ public:
 	void render() override;
 	void loadTexture();
 	void change_dir();
+	void set_alive(bool x);
+	bool get_alive();
 };
