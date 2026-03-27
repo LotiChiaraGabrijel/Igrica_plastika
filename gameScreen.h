@@ -3,6 +3,8 @@
 #include "player.h"
 #include <SDL.h>
 #include <SDL_image.h>
+#include "font.h"
+
 #include "ship.h"
 #include "trash.h"
 #include "enemy.h"
@@ -20,6 +22,7 @@ class GameScreen : public Screen {
 	Enemy* enemy_arr[10];
 	bool onWater,
 		wasOnWater;
+	SDL_Texture* font_tex;
 
 public:
 	GameScreen(SDL_Renderer* renderer);
@@ -28,5 +31,6 @@ public:
 	void render(SDL_Renderer* renderer) override;
 	bool is_on_water(int x, int y);
 	bool check_collision(SDL_Rect a, SDL_Rect b);
+	void draw_score(SDL_Renderer* renderer);
 	~GameScreen();
 };

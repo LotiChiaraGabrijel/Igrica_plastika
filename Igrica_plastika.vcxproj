@@ -134,6 +134,7 @@
   <ItemGroup>
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="entity.cpp" />
+    <ClCompile Include="font.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gameScreen.cpp" />
     <ClCompile Include="main.cpp">
@@ -146,6 +147,7 @@
     <ClCompile Include="trash.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="font.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="Game.h" />

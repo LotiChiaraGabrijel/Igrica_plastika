@@ -1,5 +1,6 @@
 #include "gameScreen.h"
 #include <iostream>
+#include <string>
 
 //gameScreen.cpp
 GameScreen::GameScreen(SDL_Renderer* renderer) {
@@ -11,6 +12,7 @@ GameScreen::GameScreen(SDL_Renderer* renderer) {
 	score = 0;
 	onWater = false;
 	wasOnWater = false;
+	font_tex = load_font(renderer);
 	surface = IMG_Load("C:\\Users\\lotig\\Downloads\\Igrica_plastika\\slike\\mask.png");
 	if (!surface) std::cout << IMG_GetError();
 	background = IMG_LoadTexture(renderer, "C:\\Users\\lotig\\Downloads\\Igrica_plastika\\slike\\background.png");
@@ -25,8 +27,8 @@ GameScreen::GameScreen(SDL_Renderer* renderer) {
 			trash_arr[i]->set_y(checkY);
 		} while (is_on_water(checkX + 25, checkY) == false);
 		do {
-			checkX = rand() % 975 + 50;
-			checkY = rand() % 450 + 50;
+			checkX = rand() % 975 + 75;
+			checkY = rand() % 450 + 75;
 			enemy_arr[i]->set_x(checkX);
 			enemy_arr[i]->set_y(checkY);
 		} while (is_on_water(checkX + 25, checkY + 49) == true && is_on_water(checkX, checkY + 49) ==
@@ -37,16 +39,7 @@ GameScreen::GameScreen(SDL_Renderer* renderer) {
 
 
 }
-GameScreen::~GameScreen() {
-	delete ship;
-	delete player;
-	SDL_FreeSurface(surface);
-	SDL_DestroyTexture(background);
-	for (int i = 0; i < 10; i++) {
-		delete trash_arr[i];
-		delete enemy_arr[i];
-	}
-}
+
 bool GameScreen::handleEvents(SDL_Event& e) {
 	if (e.type == SDL_QUIT) return 0;
 	return 1;
@@ -77,6 +70,14 @@ void GameScreen::update(float deltaTime) {
 			trash_arr[i]->set_x(oldX);
 			trash_arr[i]->set_y(oldY);
 			trash_arr[i]->change_dir();
+		}
+
+		if (enemy_arr[i]->is_in_radius(change->get_rect())) {
+			enemy_arr[i]->set_visible(true);
+		}
+		else {
+			enemy_arr[i]->set_visible(false);
+
 		}
 	}
 
@@ -127,9 +128,26 @@ void GameScreen::update(float deltaTime) {
 
 
 
+void GameScreen::render(SDL_Renderer* renderer) {
+	destRect.w = 1024;
+	destRect.h = 900;
+	destRect.x = 0;
+	destRect.y = 0;
+	SDL_RenderCopy(renderer, background, nullptr, &destRect);
+	change->render();
+	for (int i = 0; i < 10; i++)
+	{
+		trash_arr[i]->render();
+		enemy_arr[i]->render();
 
+	}
+	destRect.w = 500;
+	destRect.h = 500;
+	destRect.x = 96;
+	destRect.y = 96;
+	draw_score(renderer);
 
-
+}
 
 bool GameScreen::is_on_water(int x, int y) {
 	if (x < 0) x = 0;
@@ -148,26 +166,28 @@ bool GameScreen::is_on_water(int x, int y) {
 
 }
 
-void GameScreen::render(SDL_Renderer* renderer) {
 
-	destRect.w = 1024;
-	destRect.h = 900;
-	destRect.x = 0;
-	destRect.y = 0;
-	SDL_RenderCopy(renderer, background, nullptr, &destRect);
-	change->render();
-	for (int i = 0; i < 10; i++)
-	{
-		trash_arr[i]->render();
-		enemy_arr[i]->render();
+void GameScreen::draw_score(SDL_Renderer* renderer) {
+	std::string number;
+	if (score >= 100)
+		number = (score % 100) + (score % 10) + '0';
+	else
+		number = '0' + (score % 100) + (score % 10);
+	number = std::to_string(score);
+	draw_text(renderer, font_tex,number, 20, 20, 2);
 
+}
+
+
+GameScreen::~GameScreen() {
+	delete ship;
+	delete player;
+	SDL_DestroyTexture(font_tex);
+
+	SDL_FreeSurface(surface);
+	SDL_DestroyTexture(background);
+	for (int i = 0; i < 10; i++) {
+		delete trash_arr[i];
+		delete enemy_arr[i];
 	}
 }
-/*
-bool GameScreen::check_collision(SDL_Rect a, SDL_Rect b) {
-	if (a.x + a.w / 2 <= b.x) return false;
-	if (a.x >= b.x + b.w / 2) return false;
-	if (a.y + a.h / 2 <= b.y) return false;
-	if (a.y >= b.y + b.h / 2) return false;
-	return true;
-}*/
