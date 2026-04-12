@@ -7,7 +7,7 @@ MainMenuScreen::MainMenuScreen(SDL_Renderer* renderer) {
 	SDL_StartTextInput();
 	startGame = false;
 	name = "";
-	background = IMG_LoadTexture(renderer, "C:\\Users\\lotig\\Downloads\\Igrica_plastika\\slike\\ozdadje_menu.png");
+	background = IMG_LoadTexture(renderer, "slike/ozdadje_menu.png");
 
 }
 

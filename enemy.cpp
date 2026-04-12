@@ -18,7 +18,7 @@ Enemy::Enemy(SDL_Renderer* rend, SDL_Surface* surface) {
 }
 
 void Enemy::loadTexture() {
-	texture = IMG_LoadTexture(renderer, "C:\\Users\\lotig\\Downloads\\Igrica_plastika\\slike\\enemy.png");
+	texture = IMG_LoadTexture(renderer, "slike/enemy.png");
 
 
 }

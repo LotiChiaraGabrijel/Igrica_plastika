@@ -8,7 +8,7 @@ Ship::Ship(SDL_Renderer* rend){
 	renderer = rend;
 }
 void Ship::loadTexture() {
-	texture = IMG_LoadTexture(renderer, "C:\\Users\\lotig\\Downloads\\Igrica_plastika\\slike\\ship_img.png");
+	texture = IMG_LoadTexture(renderer, "slike/ship_img.png");
 	destRect.w = 100;
 	destRect.h = 100;
 	destRect.x = x;

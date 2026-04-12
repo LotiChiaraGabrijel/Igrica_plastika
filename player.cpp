@@ -15,7 +15,7 @@ Player::~Player() {
 }
 
 void Player::loadTexture() {
-	texture = IMG_LoadTexture(renderer, "C:\\Users\\lotig\\Downloads\\Igrica_plastika\\slike\\player_beach.png");
+	texture = IMG_LoadTexture(renderer, "slike/player_beach.png");
 
 	destRect.w = 100;
 	destRect.h = 100;

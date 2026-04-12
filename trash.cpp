@@ -10,7 +10,7 @@ Trash::Trash(SDL_Renderer* rend) {
 	ydir = 1;
 }
 void Trash::loadTexture() {
-	texture = IMG_LoadTexture(renderer, "C:\\Users\\lotig\\Downloads\\Igrica_plastika\\slike\\trash.png");
+	texture = IMG_LoadTexture(renderer, "slike/trash.png");
 	destRect.w = 50;
 	destRect.h = 50;
 	destRect.x = x;

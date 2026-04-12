@@ -17,7 +17,6 @@ Game::Game() {
 void Game::init() {
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
-    // Ustvari okno in renderer
     window = SDL_CreateWindow("Igra Izbriši plastiko",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         1024, 900, 0);
@@ -35,13 +34,11 @@ void Game::run() {
     while (running) {
         lastTime = startTime;
         startTime = SDL_GetTicks();
-        // Poll dogodki
         while (SDL_PollEvent(&ev)) {
             if (currentScreen->handleEvents(ev) == 0)
                 running = false;
         }
 
-        // Clear zaslon
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer);
 
