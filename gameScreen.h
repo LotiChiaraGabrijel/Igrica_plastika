@@ -26,6 +26,7 @@ class GameScreen : public Screen {
 	bool onWater,
 		wasOnWater;
 	SDL_Texture* font_tex;
+	bool end;
 
 public:
 	GameScreen(SDL_Renderer* renderer);
@@ -40,5 +41,6 @@ public:
 	bool is_on_water(int x, int y);
 	bool check_collision(SDL_Rect a, SDL_Rect b);
 	void draw_score(SDL_Renderer* renderer);
+	bool get_end();
 	~GameScreen();
 };

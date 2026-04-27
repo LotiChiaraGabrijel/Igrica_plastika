@@ -3,7 +3,7 @@
 Ship::Ship(SDL_Renderer* rend){
 	x = 0;
 	y = 0;
-	speed = 400;
+	speed = 300;
 	texture = nullptr;
 	renderer = rend;
 }

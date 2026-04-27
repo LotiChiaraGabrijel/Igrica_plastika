@@ -5,7 +5,7 @@
 Player::Player(SDL_Renderer* rend) {
 	x = rand() % 1025 + 100;
 	y = rand() % 901 + 100;
-	speed = 400;
+	speed = 200;
 	texture = nullptr;
 	renderer = rend;
 }

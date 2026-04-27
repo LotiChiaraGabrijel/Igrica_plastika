@@ -5,7 +5,7 @@
 Ally::Ally(SDL_Renderer* rend, SDL_Surface* surface) {
 	x = 0;
 	y = 0;
-	speed = 100;
+	speed = 60;
 	texture = nullptr;
 	renderer = rend;
 	destRect.w = 50;

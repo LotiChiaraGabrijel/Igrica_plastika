@@ -7,9 +7,10 @@
 class Enemy : public Entity {
 	SDL_Renderer* renderer;
 	SDL_Texture* texture;
-	SDL_Rect destRect;
 	SDL_Surface* mask_surface;
 	bool alive;
+	bool together;
+
 	bool xdir, ydir;
 	bool visible;
 
@@ -24,4 +25,6 @@ public:
 	bool get_alive();
 	bool is_in_radius(SDL_Rect rect);
 	void set_visible(bool x);
+	void set_together(bool x);
+	bool get_together();
 };

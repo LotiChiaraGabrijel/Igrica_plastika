@@ -3,7 +3,7 @@
 Enemy::Enemy(SDL_Renderer* rend, SDL_Surface* surface) {
 	x = 0;
 	y = 0;
-	speed = 100;
+	speed = 60;
 	texture = nullptr;
 	renderer = rend;
 	destRect.w = 50;
@@ -12,6 +12,7 @@ Enemy::Enemy(SDL_Renderer* rend, SDL_Surface* surface) {
 	destRect.x = x;
 	visible = false;
 	alive = true;
+	together = false;
 	xdir = 1;
 	ydir = 1;
 	this->mask_surface = surface;
@@ -19,7 +20,6 @@ Enemy::Enemy(SDL_Renderer* rend, SDL_Surface* surface) {
 
 void Enemy::loadTexture() {
 	texture = IMG_LoadTexture(renderer, "slike/enemy.png");
-
 
 }
 
@@ -49,11 +49,17 @@ void Enemy::render() {
 		SDL_RenderCopy(renderer, texture, nullptr, &destRect);
 	}
 }
-
+void Enemy::set_together(bool x) {
+	together = x;
+}
+bool Enemy::get_together() {
+	return together;
+}
 
 
 void Enemy::change_dir() {
 	ydir = !ydir;
+	xdir = !xdir;
 }
 
 void Enemy::set_alive(bool x) {

@@ -1,7 +1,7 @@
 #include "gameScreen.h"
 #include <iostream>
 #include <string>
-
+using namespace std;
 //gameScreen.cpp
 GameScreen::GameScreen(SDL_Renderer* renderer) {
 	player = new Player(renderer);
@@ -14,7 +14,7 @@ GameScreen::GameScreen(SDL_Renderer* renderer) {
 	wasOnWater = false;
 	font_tex = load_font(renderer);
 	surface = IMG_Load("slike/mask.png");
-
+	end = false;
 	if (!surface) std::cout << IMG_GetError();
 	background = IMG_LoadTexture(renderer, "slike/background.png");
 	init_enemy_trash(renderer);
@@ -36,43 +36,39 @@ void GameScreen::update(float deltaTime) {
 
 void GameScreen::update_player(float deltaTime) {
 	int checkX, checkY;
-
-
 	checkX = change->get_x() + 50;
 	checkY = change->get_y() + 99;
-	if (is_on_water(checkX, checkY))
-	{
+	if (is_on_water(checkX, checkY)) {
 		onWater = true;
 		for (int i = 0; i < 10; i++)
 			if (change->check_collision(trash_arr[i]->get_rect()) && trash_arr[i]->get_alive() == true) {
 				score += 10;
 				trash_arr[i]->set_alive(false);
 			}
-
-
 	}
-	else
-	{
+	else {
 		onWater = false;
 		for (int i = 0; i < 10; i++)
 			if (change->check_collision(enemy_arr[i]->get_rect()) && enemy_arr[i]->get_alive() == true) {
-				score += 10;
+				cout <<endl<< enemy_arr[i]->get_together()<<endl;
+				if (enemy_arr[i]->get_together() == true) {
+					end = true;
+					cout <<endl<< "end"<<endl;
+				}
+				else {
+					score += 10;
 				enemy_arr[i]->set_alive(false);
 			}
+			}
 	}
-
-	if (onWater != wasOnWater)
-	{
-		if (onWater == true)
-		{
+	if (onWater != wasOnWater) {
+		if (onWater == true) {
 
 			ship->set_x(player->get_x());
 			ship->set_y(player->get_y());
 			change = ship;
 		}
-
-		else
-		{
+		else {
 			player->set_x(ship->get_x());
 			player->set_y(ship->get_y());
 			change = player;
@@ -90,7 +86,8 @@ void GameScreen::update_ally(float deltaTime) {
 			oldY = ally_arr[i]->get_y();
 		checkX = ally_arr[i]->get_x();
 		checkY = ally_arr[i]->get_y();
-		if (is_on_water(checkX + 25, checkY + 75)) {
+		if (is_on_water(checkX + 25, checkY + 75) == true || is_on_water(checkX, checkY + 75) ==
+			true || is_on_water(checkX + 49, checkY + 75) == true) {
 			ally_arr[i]->set_x(oldX);
 			ally_arr[i]->set_y(oldY);
 			ally_arr[i]->change_dir();
@@ -100,7 +97,7 @@ void GameScreen::update_ally(float deltaTime) {
 }
 
 void GameScreen::update_enemy_trash(float deltaTime) {
-
+	//update position of enemy
 	for (int i = 0; i < 10; i++) {
 		float oldX = enemy_arr[i]->get_x(),
 			oldY = enemy_arr[i]->get_y();
@@ -108,13 +105,15 @@ void GameScreen::update_enemy_trash(float deltaTime) {
 
 		int checkX = enemy_arr[i]->get_x();
 		int checkY = enemy_arr[i]->get_y();
-		if (is_on_water(checkX + 25, checkY + 75)) {
+		if (is_on_water(checkX + 25, checkY + 75) == true || is_on_water(checkX, checkY + 75) ==
+			true || is_on_water(checkX + 49, checkY + 75) == true) {
 			enemy_arr[i]->set_x(oldX);
 			enemy_arr[i]->set_y(oldY);
 			enemy_arr[i]->change_dir();
 
 		}
 
+		//update position of trash
 		oldX = trash_arr[i]->get_x(),
 			oldY = trash_arr[i]->get_y();
 		trash_arr[i]->update(deltaTime);
@@ -125,7 +124,8 @@ void GameScreen::update_enemy_trash(float deltaTime) {
 			trash_arr[i]->set_y(oldY);
 			trash_arr[i]->change_dir();
 		}
-
+		
+		//check if enemy is in radius and set visibility
 		if (enemy_arr[i]->is_in_radius(change->get_rect())) {
 			enemy_arr[i]->set_visible(true);
 		}
@@ -134,6 +134,19 @@ void GameScreen::update_enemy_trash(float deltaTime) {
 
 		}
 	}
+		//checking all enemies with eachother
+		for (int i = 0; i < 10; i++) {
+			enemy_arr[i]->set_together(false);
+		}
+		for (int i = 0; i < 10; i++)
+		for (int j = 0; j < 10; j++) {
+			if (enemy_arr[i]->check_collision(enemy_arr[j]->get_rect()) && enemy_arr[j]->get_alive() == true && enemy_arr[i]->get_alive() == true && i != j) {
+				enemy_arr[i]->set_together(true);
+				enemy_arr[j]->set_together(true);
+			}
+
+		}
+	
 }
 
 void GameScreen::render(SDL_Renderer* renderer) {
@@ -208,8 +221,8 @@ void GameScreen::init_enemy_trash(SDL_Renderer* renderer) {
 			checkY = rand() % 450 + 75;
 			enemy_arr[i]->set_x(checkX);
 			enemy_arr[i]->set_y(checkY);
-		} while (is_on_water(checkX + 25, checkY + 49) == true && is_on_water(checkX, checkY + 49) ==
-			true && is_on_water(checkX + 49, checkY + 49) == true);
+		} while (is_on_water(checkX + 25, checkY + 75) == true || is_on_water(checkX, checkY + 75) ==
+			true || is_on_water(checkX + 49, checkY + 75) == true);
 
 		trash_arr[i]->loadTexture();
 		enemy_arr[i]->loadTexture();
@@ -228,13 +241,16 @@ void GameScreen:: init_ally(SDL_Renderer* renderer) {
 			checkY = rand() % 450 + 75;
 			ally_arr[i]->set_x(checkX);
 			ally_arr[i]->set_y(checkY);
-		} while (is_on_water(checkX + 25, checkY + 49) == true && is_on_water(checkX, checkY + 49) ==
-			true && is_on_water(checkX + 49, checkY + 49) == true);
+		} while (is_on_water(checkX + 25, checkY + 75) == true || is_on_water(checkX, checkY + 75) ==
+			true || is_on_water(checkX + 49, checkY + 75) == true);
 		ally_arr[i]->loadTexture();
 
 	}
 }
 
+bool GameScreen::get_end() {
+	return end;
+}
 
 GameScreen::~GameScreen() {
 	delete ship;

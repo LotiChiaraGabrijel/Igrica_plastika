@@ -6,6 +6,7 @@
 #include "gameScreen.h"
 #include "MainMenuScreen.h"
 #include <ctime>
+#include "death_screen.h"
 
 
 Game::Game() {
@@ -50,14 +51,23 @@ void Game::run() {
             {
                 delete currentScreen;
                 currentScreen = new GameScreen(renderer);
-                
+
             }
 
+        }
+        if (dynamic_cast<GameScreen*>(currentScreen)) {
+            GameScreen* game = dynamic_cast<GameScreen*>(currentScreen);
+
+            if (game->get_end() == true) {
+                delete currentScreen;
+                currentScreen = new DeathScreen(renderer);
+            }
         }
         currentScreen->render(renderer);
 
         SDL_RenderPresent(renderer);
     }
+
 }
 
 void Game::clean() {

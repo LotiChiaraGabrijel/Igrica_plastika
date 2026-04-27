@@ -133,6 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ally.cpp" />
+    <ClCompile Include="death_screen.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="font.cpp" />
@@ -149,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ally.h" />
+    <ClInclude Include="death_screen.h" />
     <ClInclude Include="font.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="entity.h" />

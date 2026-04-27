@@ -5,7 +5,6 @@
 class Ally :public Entity {
 	SDL_Renderer* renderer;
 	SDL_Texture* texture;
-	SDL_Rect destRect;
 	SDL_Surface* mask_surface;
 	bool xdir, ydir;
 	bool visible;
