@@ -11,10 +11,13 @@ GameScreen::GameScreen(SDL_Renderer* renderer) {
 	change = player;
 	score = 0;
 	onWater = false;
+	this->renderer = renderer;
+	level = 1;
 	wasOnWater = false;
 	font_tex = load_font(renderer);
 	surface = IMG_Load("slike/mask.png");
 	end = false;
+	win = false;
 	if (!surface) std::cout << IMG_GetError();
 	background = IMG_LoadTexture(renderer, "slike/background.png");
 	trash_arr.resize(10);
@@ -35,6 +38,15 @@ void GameScreen::update(float deltaTime) {
 	update_enemy_trash( deltaTime);
 	update_ally( deltaTime);
 	update_player( deltaTime);
+	//next level when all enemies and trash are destroyed
+	if (trash_arr.empty() && enemy_arr.empty()) {
+		if (level == 3) {
+			win = true;
+			return;
+		}
+		clear_level();
+		next_level();
+	}
 }
 
 void GameScreen::update_player(float deltaTime) {
@@ -285,6 +297,25 @@ void GameScreen:: init_ally(SDL_Renderer* renderer) {
 
 bool GameScreen::get_end() {
 	return end;
+}
+
+void GameScreen::next_level() {
+	++level;
+	trash_arr.resize(10 + level * 2);
+	enemy_arr.resize(10 + level * 2);
+	ally_arr.resize(5);
+
+	init_enemy_trash(renderer);
+	init_ally(renderer);
+}
+void GameScreen::clear_level() {
+	for (vector<Ally*>::iterator it = ally_arr.begin(); it != ally_arr.end();) {
+		delete* it;
+		it = ally_arr.erase(it);
+	}
+}
+bool GameScreen::get_win() {
+	return win;
 }
 
 GameScreen::~GameScreen() {

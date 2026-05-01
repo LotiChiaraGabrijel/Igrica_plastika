@@ -7,6 +7,8 @@
 #include "MainMenuScreen.h"
 #include <ctime>
 #include "death_screen.h"
+#include "win_screen.h"
+
 
 
 Game::Game() {
@@ -58,9 +60,13 @@ void Game::run() {
         if (dynamic_cast<GameScreen*>(currentScreen)) {
             GameScreen* game = dynamic_cast<GameScreen*>(currentScreen);
 
-            if (game->get_end() == true) {
+            if (game->get_end()) {
                 delete currentScreen;
                 currentScreen = new DeathScreen(renderer);
+            }
+            else if (game->get_win()) {
+                delete currentScreen;
+                currentScreen = new WinScreen(renderer);
             }
         }
         currentScreen->render(renderer);

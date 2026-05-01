@@ -147,6 +147,7 @@
     <ClCompile Include="screen.cpp" />
     <ClCompile Include="ship.cpp" />
     <ClCompile Include="trash.cpp" />
+    <ClCompile Include="win_screen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ally.h" />
@@ -161,6 +162,7 @@
     <ClInclude Include="screen.h" />
     <ClInclude Include="ship.h" />
     <ClInclude Include="trash.h" />
+    <ClInclude Include="win_screen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -17,6 +17,8 @@ class GameScreen : public Screen {
 	Ship* ship;
 	Entity* change;
 	SDL_Texture* background;
+	SDL_Renderer* renderer;
+	int level;
 	SDL_Rect destRect;
 	int score;
 	SDL_Surface* surface;
@@ -27,7 +29,7 @@ class GameScreen : public Screen {
 		wasOnWater;
 	SDL_Texture* font_tex;
 	bool end;
-
+	bool win;
 public:
 	GameScreen(SDL_Renderer* renderer);
 	void init_enemy_trash(SDL_Renderer* renderer);
@@ -42,7 +44,11 @@ public:
 	bool check_collision(SDL_Rect a, SDL_Rect b);
 	void draw_score(SDL_Renderer* renderer);
 	bool get_end();
+	bool get_win();
 	void ally_collision_player();
 	void enemy_collision_player();
+	void clear_level();
+
+	void next_level();
 	~GameScreen();
 };
