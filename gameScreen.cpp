@@ -17,6 +17,9 @@ GameScreen::GameScreen(SDL_Renderer* renderer) {
 	end = false;
 	if (!surface) std::cout << IMG_GetError();
 	background = IMG_LoadTexture(renderer, "slike/background.png");
+	trash_arr.resize(10);
+	enemy_arr.resize(10);
+	ally_arr.resize(5);
 	init_enemy_trash(renderer);
 	init_ally(renderer);
 
@@ -39,27 +42,21 @@ void GameScreen::update_player(float deltaTime) {
 	checkX = change->get_x() + 50;
 	checkY = change->get_y() + 99;
 	if (is_on_water(checkX, checkY)) {
-		onWater = true;
-		for (int i = 0; i < 10; i++)
-			if (change->check_collision(trash_arr[i]->get_rect()) && trash_arr[i]->get_alive() == true) {
-				score += 10;
-				trash_arr[i]->set_alive(false);
-			}
+		onWater = true; 
+			vector<Trash*>::iterator it;
+			for (it = trash_arr.begin(); it != trash_arr.end();)
+				if (change->check_collision((*it)->get_rect()) && (*it)->get_alive() == true) {
+					score += 10;
+					delete* it;
+					it = trash_arr.erase(it);
+				}
+				else
+					++it;
 	}
 	else {
 		onWater = false;
-		for (int i = 0; i < 10; i++)
-			if (change->check_collision(enemy_arr[i]->get_rect()) && enemy_arr[i]->get_alive() == true) {
-				cout <<endl<< enemy_arr[i]->get_together()<<endl;
-				if (enemy_arr[i]->get_together() == true) {
-					end = true;
-					cout <<endl<< "end"<<endl;
-				}
-				else {
-					score += 10;
-				enemy_arr[i]->set_alive(false);
-			}
-			}
+		enemy_collision_player();
+		ally_collision_player();
 	}
 	if (onWater != wasOnWater) {
 		if (onWater == true) {
@@ -77,76 +74,113 @@ void GameScreen::update_player(float deltaTime) {
 	}
 }
 
+void GameScreen::enemy_collision_player() {
+	vector<Enemy*>::iterator it;
+
+	for (it = enemy_arr.begin(); it != enemy_arr.end();)
+		if (change->check_collision((*it)->get_rect()) && (*it)->get_alive() == true) {
+			cout << endl << (*it)->get_together() << endl;
+			if ((*it)->get_together() == true) {
+				end = true;
+				cout << endl << "end" << endl;
+				return;
+			}
+			else {
+				score += 10;
+				delete* it;
+				it = enemy_arr.erase(it);
+
+			}
+		}
+		else
+			++it;
+}
+void GameScreen:: ally_collision_player() {
+	for (vector<Ally*>::iterator it = ally_arr.begin(); it != ally_arr.end(); it++)
+		if (change->check_collision((*it)->get_rect()) && (*it)->get_alive() == true) {
+			score -= 10;
+			(*it)->set_alive(false);
+		}
+}
+
 
 void GameScreen::update_ally(float deltaTime) {
 	int checkX, checkY;
-
-	for (int i = 0; i < 5; i++) {
-		float oldX = ally_arr[i]->get_x(),
-			oldY = ally_arr[i]->get_y();
-		checkX = ally_arr[i]->get_x();
-		checkY = ally_arr[i]->get_y();
+	for (vector<Ally*>::iterator it = ally_arr.begin(); it != ally_arr.end(); it++)  {
+		float oldX = (*it)->get_x(),
+			oldY = (*it)->get_y();
+		checkX = (*it)->get_x();
+		checkY = (*it)->get_y();
 		if (is_on_water(checkX + 25, checkY + 75) == true || is_on_water(checkX, checkY + 75) ==
 			true || is_on_water(checkX + 49, checkY + 75) == true) {
-			ally_arr[i]->set_x(oldX);
-			ally_arr[i]->set_y(oldY);
-			ally_arr[i]->change_dir();
+			(*it)->set_x(oldX);
+			(*it)->set_y(oldY);
+			(*it)->change_dir();
 		}
-		ally_arr[i]->update(deltaTime);
+		(*it)->update(deltaTime);
 	}
 }
 
 void GameScreen::update_enemy_trash(float deltaTime) {
 	//update position of enemy
-	for (int i = 0; i < 10; i++) {
-		float oldX = enemy_arr[i]->get_x(),
-			oldY = enemy_arr[i]->get_y();
-		enemy_arr[i]->update(deltaTime);
+	for (vector<Enemy*>::iterator it = enemy_arr.begin(); it != enemy_arr.end(); it++) {
+		float oldX = (*it)->get_x(),
+			oldY = (*it)->get_y();
+		(*it)->update(deltaTime);
 
-		int checkX = enemy_arr[i]->get_x();
-		int checkY = enemy_arr[i]->get_y();
+		int checkX = (*it)->get_x();
+		int checkY = (*it)->get_y();
 		if (is_on_water(checkX + 25, checkY + 75) == true || is_on_water(checkX, checkY + 75) ==
 			true || is_on_water(checkX + 49, checkY + 75) == true) {
-			enemy_arr[i]->set_x(oldX);
-			enemy_arr[i]->set_y(oldY);
-			enemy_arr[i]->change_dir();
+			(*it)->set_x(oldX);
+			(*it)->set_y(oldY);
+			(*it)->change_dir();
 
 		}
-
-		//update position of trash
-		oldX = trash_arr[i]->get_x(),
-			oldY = trash_arr[i]->get_y();
-		trash_arr[i]->update(deltaTime);
-		checkX = trash_arr[i]->get_x();
-		checkY = trash_arr[i]->get_y();
-		if (is_on_water(checkX + 25, checkY + 75) == false) {
-			trash_arr[i]->set_x(oldX);
-			trash_arr[i]->set_y(oldY);
-			trash_arr[i]->change_dir();
-		}
-		
 		//check if enemy is in radius and set visibility
-		if (enemy_arr[i]->is_in_radius(change->get_rect())) {
-			enemy_arr[i]->set_visible(true);
+		if ((*it)->is_in_radius(change->get_rect())) {
+			(*it)->set_visible(true);
 		}
 		else {
-			enemy_arr[i]->set_visible(false);
+			(*it)->set_visible(false);
 
 		}
 	}
-		//checking all enemies with eachother
-		for (int i = 0; i < 10; i++) {
-			enemy_arr[i]->set_together(false);
-		}
-		for (int i = 0; i < 10; i++)
-		for (int j = 0; j < 10; j++) {
-			if (enemy_arr[i]->check_collision(enemy_arr[j]->get_rect()) && enemy_arr[j]->get_alive() == true && enemy_arr[i]->get_alive() == true && i != j) {
-				enemy_arr[i]->set_together(true);
-				enemy_arr[j]->set_together(true);
-			}
+	for (vector<Trash*>::iterator it = trash_arr.begin(); it != trash_arr.end(); it++) {
+		//update position of trash
 
+		int oldX = (*it)->get_x(),
+			oldY = (*it)->get_y();
+		(*it)->update(deltaTime);
+		int checkX = (*it)->get_x();
+		int checkY = (*it)->get_y();
+		if (is_on_water(checkX + 25, checkY + 75) == false) {
+			(*it)->set_x(oldX);
+			(*it)->set_y(oldY);
+			(*it)->change_dir();
 		}
-	
+	}
+
+
+	//checking all enemies with eachother
+	for (vector<Enemy*>::iterator it = enemy_arr.begin(); it != enemy_arr.end(); it++) {
+		(*it)->set_together(false);
+	}
+	for (vector<Enemy*>::iterator it = enemy_arr.begin(); it != enemy_arr.end(); it++) {
+		(*it)->set_together(false);
+	}
+
+	for (vector<Enemy*>::iterator it = enemy_arr.begin(); it != enemy_arr.end(); it++) {
+		for (vector<Enemy*>::iterator it2 = it + 1; it2 != enemy_arr.end(); it2++) {
+			if ((*it)->check_collision((*it2)->get_rect()) &&
+				(*it)->get_alive() == true &&
+				(*it2)->get_alive() == true) {
+
+				(*it)->set_together(true);
+				(*it2)->set_together(true);
+			}
+		}
+	}
 }
 
 void GameScreen::render(SDL_Renderer* renderer) {
@@ -156,14 +190,14 @@ void GameScreen::render(SDL_Renderer* renderer) {
 	destRect.y = 0;
 	SDL_RenderCopy(renderer, background, nullptr, &destRect);
 	change->render();
-	for (int i = 0; i < 10; i++)
-	{
-		trash_arr[i]->render();
-		enemy_arr[i]->render();
+	for (vector<Enemy*>::iterator it = enemy_arr.begin(); it != enemy_arr.end(); it++)
+		(*it)->render();
+	for (vector<Trash*>::iterator it = trash_arr.begin(); it != trash_arr.end(); it++)
+		(*it)->render();
+	for (vector<Ally*>::iterator it = ally_arr.begin(); it != ally_arr.end(); it++)
+		(*it)->render();
 
-	}
-	for (int i = 0; i < 5; i++)
-		ally_arr[i]->render();
+
 
 	destRect.w = 500;
 	destRect.h = 500;
@@ -202,48 +236,49 @@ void GameScreen::draw_score(SDL_Renderer* renderer) {
 
 }
 
-
 void GameScreen::init_enemy_trash(SDL_Renderer* renderer) {
 	int checkX, checkY;
+	for (vector<Enemy*>::iterator it = enemy_arr.begin(); it != enemy_arr.end(); it++) {
+		(*it) = new Enemy(renderer, surface);
+		do {
+			checkX = rand() % 975 + 75;
+			checkY = rand() % 450 + 75;
+			(*it)->set_x(checkX);
+			(*it)->set_y(checkY);
+		} while (is_on_water(checkX + 25, checkY + 75) == true || is_on_water(checkX, checkY + 75) ==
+			true || is_on_water(checkX + 49, checkY + 75) == true);
+		(*it)->loadTexture();
 
-	for (int i = 0; i < 10; i++) {
-		trash_arr[i] = new Trash(renderer);
-		enemy_arr[i] = new Enemy(renderer, surface);
+	}
+
+
+	for (vector<Trash*>::iterator it = trash_arr.begin(); it != trash_arr.end(); it++) {
+		(*it) = new Trash(renderer);
 
 		do {
 			checkX = rand() % 924 + 50;
 			checkY = rand() % 850 + 50;
-			trash_arr[i]->set_x(checkX);
-			trash_arr[i]->set_y(checkY);
+			(*it)->set_x(checkX);
+			(*it)->set_y(checkY);
 		} while (is_on_water(checkX + 25, checkY) == false);
-		do {
-			checkX = rand() % 975 + 75;
-			checkY = rand() % 450 + 75;
-			enemy_arr[i]->set_x(checkX);
-			enemy_arr[i]->set_y(checkY);
-		} while (is_on_water(checkX + 25, checkY + 75) == true || is_on_water(checkX, checkY + 75) ==
-			true || is_on_water(checkX + 49, checkY + 75) == true);
-
-		trash_arr[i]->loadTexture();
-		enemy_arr[i]->loadTexture();
-
+		(*it)->loadTexture();
 	}
 }
 
 void GameScreen:: init_ally(SDL_Renderer* renderer) {
 	int checkX, checkY;
 
-	for (int i = 0; i < 5; i++) {
-		ally_arr[i] = new Ally(renderer, surface);
+	for (vector<Ally*>::iterator it = ally_arr.begin(); it != ally_arr.end(); it++) {
+		(*it) = new Ally(renderer, surface);
 
 		do {
 			checkX = rand() % 975 + 75;
 			checkY = rand() % 450 + 75;
-			ally_arr[i]->set_x(checkX);
-			ally_arr[i]->set_y(checkY);
+			(*it)->set_x(checkX);
+			(*it)->set_y(checkY);
 		} while (is_on_water(checkX + 25, checkY + 75) == true || is_on_water(checkX, checkY + 75) ==
 			true || is_on_water(checkX + 49, checkY + 75) == true);
-		ally_arr[i]->loadTexture();
+		(*it)->loadTexture();
 
 	}
 }
@@ -258,9 +293,21 @@ GameScreen::~GameScreen() {
 	SDL_DestroyTexture(font_tex);
 
 	SDL_FreeSurface(surface);
-	SDL_DestroyTexture(background);
-	for (int i = 0; i < 10; i++) {
-		delete trash_arr[i];
-		delete enemy_arr[i];
+	SDL_DestroyTexture(background); 
+	for (vector<Trash*>::iterator it = trash_arr.begin(); it != trash_arr.end();) {
+		delete* it;
+		it = trash_arr.erase(it);
 	}
+
+	for (vector<Enemy*>::iterator it = enemy_arr.begin(); it != enemy_arr.end();) {
+		delete* it;
+		it = enemy_arr.erase(it);
+	}
+
+	for (vector<Ally*>::iterator it = ally_arr.begin(); it != ally_arr.end();) {
+		delete* it;
+		it = ally_arr.erase(it);
+	}
+
+
 }

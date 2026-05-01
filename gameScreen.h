@@ -6,7 +6,7 @@
 #include "ally.h"
 
 #include "font.h"
-
+#include <vector>
 #include "ship.h"
 #include "trash.h"
 #include "enemy.h"
@@ -20,9 +20,9 @@ class GameScreen : public Screen {
 	SDL_Rect destRect;
 	int score;
 	SDL_Surface* surface;
-	Trash* trash_arr[10];
-	Enemy* enemy_arr[10];
-	Ally* ally_arr[5];
+	std::vector<Trash *>  trash_arr;
+	std::vector<Enemy*> enemy_arr;
+	std::vector<Ally*> ally_arr;
 	bool onWater,
 		wasOnWater;
 	SDL_Texture* font_tex;
@@ -42,5 +42,7 @@ public:
 	bool check_collision(SDL_Rect a, SDL_Rect b);
 	void draw_score(SDL_Renderer* renderer);
 	bool get_end();
+	void ally_collision_player();
+	void enemy_collision_player();
 	~GameScreen();
 };
