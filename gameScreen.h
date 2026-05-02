@@ -4,12 +4,14 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "ally.h"
-
+#include <fstream>
 #include "font.h"
 #include <vector>
 #include "ship.h"
 #include "trash.h"
 #include "enemy.h"
+#include <string>
+
 
 //game screen header
 class GameScreen : public Screen {
@@ -30,8 +32,9 @@ class GameScreen : public Screen {
 	SDL_Texture* font_tex;
 	bool end;
 	bool win;
+	std::string name;
 public:
-	GameScreen(SDL_Renderer* renderer);
+	GameScreen(SDL_Renderer* renderer, std::string name);
 	void init_enemy_trash(SDL_Renderer* renderer);
 	void init_ally(SDL_Renderer* renderer);
 	void update_enemy_trash(float deltaTime);
@@ -48,7 +51,7 @@ public:
 	void ally_collision_player();
 	void enemy_collision_player();
 	void clear_level();
-
+	void save_score();
 	void next_level();
 	~GameScreen();
 };

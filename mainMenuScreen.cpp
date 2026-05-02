@@ -38,6 +38,11 @@ bool MainMenuScreen::handleEvents(SDL_Event& e) {
 	if (e.type == SDL_QUIT) return 0;
 	return 1;
 }
+std::string MainMenuScreen::get_name() {
+	return name;
+}
+
+
 void MainMenuScreen::update(float deltaTime) {
 
 }

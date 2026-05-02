@@ -10,7 +10,6 @@
 #include "win_screen.h"
 
 
-
 Game::Game() {
     running = false;
     window = nullptr;
@@ -51,8 +50,9 @@ void Game::run() {
             MainMenuScreen* menu = dynamic_cast<MainMenuScreen*>(currentScreen);
             if (menu->get_start() == true)
             {
+                name = menu->get_name();
                 delete currentScreen;
-                currentScreen = new GameScreen(renderer);
+                currentScreen = new GameScreen(renderer, name);
 
             }
 

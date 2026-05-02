@@ -21,5 +21,6 @@ public:
 	void update(float deltaTime) override;
 	void render(SDL_Renderer* renderer) override;
 	bool get_start();
+	std::string get_name();
 	~MainMenuScreen();
 };

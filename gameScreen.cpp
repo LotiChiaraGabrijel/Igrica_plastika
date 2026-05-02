@@ -1,9 +1,11 @@
 #include "gameScreen.h"
 #include <iostream>
 #include <string>
+#include <cstring>
 using namespace std;
 //gameScreen.cpp
-GameScreen::GameScreen(SDL_Renderer* renderer) {
+GameScreen::GameScreen(SDL_Renderer* renderer, string name) {
+	this->name = name;
 	player = new Player(renderer);
 	ship = new Ship(renderer);
 	player->loadTexture();
@@ -40,8 +42,9 @@ void GameScreen::update(float deltaTime) {
 	update_player( deltaTime);
 	//next level when all enemies and trash are destroyed
 	if (trash_arr.empty() && enemy_arr.empty()) {
-		if (level == 3) {
+		if (level == 1) {
 			win = true;
+			save_score();
 			return;
 		}
 		clear_level();
@@ -314,6 +317,21 @@ void GameScreen::clear_level() {
 		it = ally_arr.erase(it);
 	}
 }
+struct player_info {
+	char name_player[30];
+	int score_player;
+};
+void GameScreen::save_score() {
+	player_info info;
+	strncpy_s(info.name_player, sizeof(info.name_player), name.c_str(), _TRUNCATE);
+	info.score_player = score;
+	ofstream file("scores.dat", ios::binary | ios::app);
+	if (file.is_open()) {
+		file.write(reinterpret_cast<char*>(&info), sizeof(info));
+		file.close();
+	}
+}
+
 bool GameScreen::get_win() {
 	return win;
 }
