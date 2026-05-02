@@ -16,6 +16,7 @@ GameScreen::GameScreen(SDL_Renderer* renderer, string name) {
 	this->renderer = renderer;
 	level = 1;
 	wasOnWater = false;
+	game_time = 0;
 	font_tex = load_font(renderer);
 	surface = IMG_Load("slike/mask.png");
 	end = false;
@@ -35,6 +36,7 @@ bool GameScreen::handleEvents(SDL_Event& e) {
 	return 1;
 }
 void GameScreen::update(float deltaTime) {
+	game_time += deltaTime;
 	change->update(deltaTime);
 		//check enemy on water
 	update_enemy_trash( deltaTime);
@@ -42,12 +44,13 @@ void GameScreen::update(float deltaTime) {
 	update_player( deltaTime);
 	//next level when all enemies and trash are destroyed
 	if (trash_arr.empty() && enemy_arr.empty()) {
+		clear_level();
+
 		if (level == 1) {
 			win = true;
 			save_score();
 			return;
 		}
-		clear_level();
 		next_level();
 	}
 }
@@ -94,10 +97,8 @@ void GameScreen::enemy_collision_player() {
 
 	for (it = enemy_arr.begin(); it != enemy_arr.end();)
 		if (change->check_collision((*it)->get_rect()) && (*it)->get_alive() == true) {
-			cout << endl << (*it)->get_together() << endl;
 			if ((*it)->get_together() == true) {
 				end = true;
-				cout << endl << "end" << endl;
 				return;
 			}
 			else {
@@ -218,7 +219,7 @@ void GameScreen::render(SDL_Renderer* renderer) {
 	destRect.h = 500;
 	destRect.x = 96;
 	destRect.y = 96;
-	draw_score(renderer);
+	draw_score_level_time(renderer);
 
 }
 
@@ -240,7 +241,7 @@ bool GameScreen::is_on_water(int x, int y) {
 }
 
 
-void GameScreen::draw_score(SDL_Renderer* renderer) {
+void GameScreen::draw_score_level_time(SDL_Renderer* renderer) {
 	std::string number;
 	if (score >= 100)
 		number = (score % 100) + (score % 10) + '0';
@@ -248,6 +249,9 @@ void GameScreen::draw_score(SDL_Renderer* renderer) {
 		number = '0' + (score % 100) + (score % 10);
 	number = std::to_string(score);
 	draw_text(renderer, font_tex,number, 20, 20, 2);
+	draw_text(renderer, font_tex, "level "+ to_string(level), 850, 20, 2);
+	draw_text(renderer, font_tex, to_string(game_time), 20, 50, 2);
+
 
 }
 
@@ -307,6 +311,7 @@ void GameScreen::next_level() {
 	trash_arr.resize(10 + level * 2);
 	enemy_arr.resize(10 + level * 2);
 	ally_arr.resize(5);
+	game_time = 0;
 
 	init_enemy_trash(renderer);
 	init_ally(renderer);
@@ -316,6 +321,9 @@ void GameScreen::clear_level() {
 		delete* it;
 		it = ally_arr.erase(it);
 	}
+	if (game_time <25) score += 200;
+	else if (game_time < 50) score += 150;
+	else if (game_time < 75) score += 50;
 }
 struct player_info {
 	char name_player[30];

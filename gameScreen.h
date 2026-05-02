@@ -12,9 +12,9 @@
 #include "enemy.h"
 #include <string>
 
-
 //game screen header
 class GameScreen : public Screen {
+	float game_time;
 	Player* player;
 	Ship* ship;
 	Entity* change;
@@ -45,7 +45,7 @@ public:
 	void render(SDL_Renderer* renderer) override;
 	bool is_on_water(int x, int y);
 	bool check_collision(SDL_Rect a, SDL_Rect b);
-	void draw_score(SDL_Renderer* renderer);
+	void draw_score_level_time(SDL_Renderer* renderer);
 	bool get_end();
 	bool get_win();
 	void ally_collision_player();

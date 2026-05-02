@@ -64,6 +64,7 @@ void WinScreen::display_score(SDL_Renderer* renderer) {
 
 			}
 		}
+	//remove duplicate names
 	vector<const char*> seen;
 	vector<player_info> final_list;
 
@@ -73,7 +74,7 @@ void WinScreen::display_score(SDL_Renderer* renderer) {
 			final_list.push_back(vec[i]);
 		}
 	}
-
+	//show the scores
 	int y = 70;
 	string text;
 	for (int i = 0; i < final_list.size(); i++) {
