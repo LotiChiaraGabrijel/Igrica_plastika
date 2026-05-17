@@ -48,11 +48,11 @@ void Game::run() {
         currentScreen->update(deltaTime);
         if (dynamic_cast<MainMenuScreen*>(currentScreen)) {
             MainMenuScreen* menu = dynamic_cast<MainMenuScreen*>(currentScreen);
-            if (menu->get_start() == true)
+            if (menu->get_start())
             {
                 name = menu->get_name();
                 delete currentScreen;
-                currentScreen = new GameScreen(renderer, name);
+                currentScreen = new GameScreen(renderer, name, false);
 
             }
 
@@ -67,6 +67,32 @@ void Game::run() {
             else if (game->get_win()) {
                 delete currentScreen;
                 currentScreen = new WinScreen(renderer);
+            }
+        }
+        if (dynamic_cast<DeathScreen*>(currentScreen)) {
+            DeathScreen* death = dynamic_cast<DeathScreen*>(currentScreen);
+
+            if (death->get_reset()) {
+                delete currentScreen;
+                currentScreen = new GameScreen(renderer, name, false);
+
+            }
+            else if (death->get_replay()) {
+                delete currentScreen;
+                currentScreen = new GameScreen(renderer, name, true);
+            }
+
+        }
+        else if (dynamic_cast<WinScreen*>(currentScreen)) {
+            WinScreen* win = dynamic_cast<WinScreen*>(currentScreen);
+
+            if (win->get_reset()) {
+                delete currentScreen;
+                currentScreen = new GameScreen(renderer, name, false);
+            }
+            else if (win->get_replay()) {
+                delete currentScreen;
+                currentScreen = new GameScreen(renderer, name, true);
             }
         }
         currentScreen->render(renderer);

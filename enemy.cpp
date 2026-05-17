@@ -11,7 +11,6 @@ Enemy::Enemy(SDL_Renderer* rend, SDL_Surface* surface) {
 	destRect.y = y;
 	destRect.x = x;
 	visible = false;
-	alive = true;
 	together = false;
 	xdir = 1;
 	ydir = 1;
@@ -43,7 +42,7 @@ void Enemy::update(float deltaTime) {
 }
 
 void Enemy::render() {
-	if (alive == true && visible == true) {
+	if (visible == true) {
 		destRect.x = x;
 		destRect.y = y;
 		SDL_RenderCopy(renderer, texture, nullptr, &destRect);
@@ -62,18 +61,12 @@ void Enemy::change_dir() {
 	xdir = !xdir;
 }
 
-void Enemy::set_alive(bool x) {
-	alive = x;
-}
 
 Enemy::~Enemy() {
 	if (texture)
 		SDL_DestroyTexture(texture);
 }
 
-bool Enemy::get_alive() {
-	return alive;
-}
 
 
 bool Enemy::is_in_radius(SDL_Rect rect) {

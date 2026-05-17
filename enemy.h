@@ -21,8 +21,6 @@ public:
 	void render() override;
 	void loadTexture();
 	void change_dir();
-	void set_alive(bool x);
-	bool get_alive();
 	bool is_in_radius(SDL_Rect rect);
 	void set_visible(bool x);
 	void set_together(bool x);

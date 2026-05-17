@@ -7,7 +7,6 @@ class Ally :public Entity {
 	SDL_Texture* texture;
 	SDL_Surface* mask_surface;
 	bool xdir, ydir;
-	bool alive;
 
 
 public:
@@ -17,6 +16,5 @@ public:
 	void render() override;
 	void loadTexture();
 	void change_dir();
-	bool get_alive();
-	void set_alive(bool x);
+
 };

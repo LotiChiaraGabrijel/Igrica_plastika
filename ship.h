@@ -4,7 +4,6 @@
 #include "entity.h"
 #include <cstdlib>
 
-
 class Ship : public Entity {
 	SDL_Renderer* renderer;
 	SDL_Texture* texture;
@@ -12,9 +11,10 @@ class Ship : public Entity {
 public:
 	Ship(SDL_Renderer* rend);
 	~Ship();
-	void update(float deltaTime) override;
-	void render() override;
+	void update(float deltaTime);
+	void render();
 	void loadTexture();
+	void replay(struct position poz) override;
 
 
 };

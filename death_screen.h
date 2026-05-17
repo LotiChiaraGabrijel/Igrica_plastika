@@ -6,14 +6,20 @@
 
 class DeathScreen : public Screen {
 	SDL_Rect destRect;
-
+	bool reset;
+	bool replay;
+	SDL_Rect reset_button;
+	SDL_Texture* reset_tex;
+	SDL_Rect replay_button;
+	SDL_Texture* replay_tex;
 	SDL_Texture* background;
 
 public:
 	DeathScreen(SDL_Renderer*);
 	bool handleEvents(SDL_Event& e) override;
 	void update(float deltaTime) override;
-
+	bool get_reset();
+	bool get_replay();
 	void render(SDL_Renderer* renderer) override;
 	~DeathScreen();
 };

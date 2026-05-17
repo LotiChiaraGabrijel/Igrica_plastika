@@ -10,7 +10,11 @@ Trash::Trash(SDL_Renderer* rend) {
 	ydir = 1;
 }
 void Trash::loadTexture() {
-	texture = IMG_LoadTexture(renderer, "slike/trash.png");
+	if (rand() % 2 == 0)
+		texture = IMG_LoadTexture(renderer, "slike/trash.png");
+	else
+		texture = IMG_LoadTexture(renderer, "slike/trash2.png");
+
 	destRect.w = 50;
 	destRect.h = 50;
 	destRect.x = x;
@@ -40,23 +44,17 @@ void Trash::update(float deltaTime) {
 void Trash::render() {
 	destRect.x = x;
 	destRect.y = y;
-	if (alive == true)
-		SDL_RenderCopy(renderer, texture, nullptr, &destRect);
+	SDL_RenderCopy(renderer, texture, nullptr, &destRect);
 
 }
 
 Trash::~Trash() {
 	if (texture)
 		SDL_DestroyTexture(texture);
+
+
 }
 
-void Trash::set_alive(bool x) {
-	alive = x;
-}
-
-bool Trash::get_alive() {
-	return alive;
-}
 
 void Trash::change_dir() {
 	ydir = !ydir;

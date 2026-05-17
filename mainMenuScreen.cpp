@@ -60,6 +60,9 @@ void MainMenuScreen::render(SDL_Renderer* renderer) {
 }
 MainMenuScreen::~MainMenuScreen() {
 	SDL_StopTextInput();
+	SDL_DestroyTexture(font_tex);
+	SDL_DestroyTexture(background);
+	SDL_DestroyTexture(start_button);
 
 }
 

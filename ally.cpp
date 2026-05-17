@@ -14,7 +14,6 @@ Ally::Ally(SDL_Renderer* rend, SDL_Surface* surface) {
 	destRect.x = x;
 	xdir = 1;
 	ydir = 1;
-	alive = true;
 	this->mask_surface = surface;
 }
 
@@ -24,12 +23,7 @@ void Ally::loadTexture() {
 void Ally::change_dir() {
 	ydir = !ydir;
 }
-bool Ally::get_alive() {
-	return alive;
-}
-void Ally::set_alive(bool x){
-	alive = x;
-}
+
 
 void Ally::update(float deltaTime) {
 	int dir = rand() % 600;
@@ -51,11 +45,9 @@ void Ally::update(float deltaTime) {
 }
 
 void Ally::render() {
-	if (alive == true){
 		destRect.x = x;
 		destRect.y = y;
 		SDL_RenderCopy(renderer, texture, nullptr, &destRect);
-	}
 
 }
 

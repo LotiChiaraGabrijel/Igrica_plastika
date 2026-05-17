@@ -5,6 +5,12 @@ using namespace std;
 WinScreen::WinScreen(SDL_Renderer* renderer) {
 	background = IMG_LoadTexture(renderer, "slike/win.png");
 	font_tex = load_font(renderer);
+	reset = false;
+	reset_tex = IMG_LoadTexture(renderer, "slike/restart.png");
+	replay = false;
+	replay_tex = IMG_LoadTexture(renderer, "slike/replay.png");
+	reset_button = { 150, 250, 256, 256 };
+	replay_button = { 600, 250, 256, 256 };
 
 }
 void WinScreen::render(SDL_Renderer* renderer) {
@@ -13,16 +19,37 @@ void WinScreen::render(SDL_Renderer* renderer) {
 	destRect.x = 0;
 	destRect.y = 0;
 	SDL_RenderCopy(renderer, background, nullptr, &destRect);
+	SDL_RenderCopy(renderer, reset_tex, nullptr, &reset_button);
+	SDL_RenderCopy(renderer, replay_tex, nullptr, &replay_button);
+
 	display_score(renderer);
 }
 struct player_info {
 	char name_player[30];
 	int score_player;
 };
+bool WinScreen::get_replay() {
+
+	return replay;
+}
 
 bool WinScreen::handleEvents(SDL_Event& e) {
 	if (e.type == SDL_QUIT) return 0;
+	if (e.type == SDL_MOUSEBUTTONDOWN) {
+		int mouseX = e.button.x;
+		int mouseY = e.button.y;
+
+		if (mouseX >= reset_button.x && mouseX <= reset_button.x + reset_button.w &&
+			mouseY >= reset_button.y && mouseY <= reset_button.y + reset_button.h) {
+			reset = true;
+		}
+		if (mouseX >= replay_button.x && mouseX <= replay_button.x + replay_button.w &&
+			mouseY >= replay_button.y && mouseY <= replay_button.y + replay_button.h) {
+			replay = true;
+		}
+	}
 	return 1;
+
 }
 void WinScreen::update(float deltaTime) {
 }
@@ -33,6 +60,10 @@ bool WinScreen::is_in_vector(char name[30], vector<const char*> vec) {
 	}
 	return 0;
 }
+bool WinScreen::get_reset() {
+	return reset;
+
+}
 
 
 void WinScreen::display_score(SDL_Renderer* renderer) {
@@ -42,7 +73,7 @@ void WinScreen::display_score(SDL_Renderer* renderer) {
 	draw_text(renderer, font_tex, "Leaderboard:", 410, 40, 2);
 	vector<player_info> vec;
 	if (file.is_open()) {
-		while (file.read(reinterpret_cast<char*>(&s), sizeof(s))) {
+		while (file.read((char*)(&s), sizeof(s))) {
 			vec.push_back(s);
 		}
 		file.close();
@@ -92,4 +123,8 @@ WinScreen::~WinScreen() {
 		SDL_DestroyTexture(background);
 	if (font_tex)
 		SDL_DestroyTexture(font_tex);
+	if (reset_tex)
+		SDL_DestroyTexture(reset_tex);
+	if (replay_tex)
+		SDL_DestroyTexture(replay_tex);
 } 

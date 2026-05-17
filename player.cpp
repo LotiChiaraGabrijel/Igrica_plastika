@@ -2,6 +2,7 @@
 #include <SDL_image.h>
 #include <ctime>
 #include <cstdlib>
+
 Player::Player(SDL_Renderer* rend) {
 	x = rand() % 1025 + 100;
 	y = rand() % 901 + 100;
@@ -22,6 +23,11 @@ void Player::loadTexture() {
 	destRect.x = x;
 	destRect.y = y;
 
+
+}
+void Player::replay(struct position poz) {
+	x = poz.x;
+	y = poz.y;
 
 }
 void Player::update(float deltaTime) {

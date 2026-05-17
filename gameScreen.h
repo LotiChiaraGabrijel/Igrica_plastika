@@ -21,8 +21,13 @@ class GameScreen : public Screen {
 	SDL_Texture* background;
 	SDL_Renderer* renderer;
 	int level;
+	float replay_timer;
 	SDL_Rect destRect;
 	int score;
+	bool paused;
+	SDL_Rect pause_button;
+	SDL_Texture* pause;
+	std::ifstream replay_file;
 	SDL_Surface* surface;
 	std::vector<Trash *>  trash_arr;
 	std::vector<Enemy*> enemy_arr;
@@ -33,8 +38,10 @@ class GameScreen : public Screen {
 	bool end;
 	bool win;
 	std::string name;
+	bool replay;
+	float replay_delay;
 public:
-	GameScreen(SDL_Renderer* renderer, std::string name);
+	GameScreen(SDL_Renderer* renderer, std::string name,bool replay);
 	void init_enemy_trash(SDL_Renderer* renderer);
 	void init_ally(SDL_Renderer* renderer);
 	void update_enemy_trash(float deltaTime);
@@ -43,6 +50,7 @@ public:
 	bool handleEvents(SDL_Event& e) override;
 	void update(float deltaTime) override;
 	void render(SDL_Renderer* renderer) override;
+	void save_position(float deltaTime);
 	bool is_on_water(int x, int y);
 	bool check_collision(SDL_Rect a, SDL_Rect b);
 	void draw_score_level_time(SDL_Renderer* renderer);
@@ -53,5 +61,8 @@ public:
 	void clear_level();
 	void save_score();
 	void next_level();
+	void trash_pick_up();
+	void replay_function(float deltaTime);
+
 	~GameScreen();
 };

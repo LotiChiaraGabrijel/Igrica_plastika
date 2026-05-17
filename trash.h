@@ -3,7 +3,8 @@
 #include <SDL.h>
 #include "entity.h"
 #include <cstdlib>
-
+#include <ctime>
+#include <ctime>
 class Trash : public Entity {
 	SDL_Renderer* renderer;
 	SDL_Texture* texture;
@@ -16,8 +17,6 @@ public:
 	void render() override;
 	void loadTexture();
 	void change_dir();
-	bool get_alive();
 
-	void set_alive(bool x);
 
 };

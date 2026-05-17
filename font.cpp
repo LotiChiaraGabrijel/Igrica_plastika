@@ -1,14 +1,18 @@
 #include "font.h"
 
 SDL_Texture* load_font(SDL_Renderer* renderer) {
-	
+// Create an empty surface 
+
 	SDL_Surface* surf = SDL_CreateRGBSurface(0, FONT_WIDTH, FONT_HEIGHT,
 		32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+	// Define colors
 	Uint32 white = SDL_MapRGB(surf->format, 255, 255, 255);
 	Uint32 black = SDL_MapRGBA(surf->format, 0, 0, 0, 0);
 
+	// Convert the 2D bitmap array into actual pixels on the SDL surface
 	for (int y = 0; y < FONT_HEIGHT; ++y) {
 		for (int x = 0; x < FONT_WIDTH; ++x) {
+			// If the bitmap value is 1 -> draw white else -> draw transparent
 			Uint32 color = font_bitmap[y][x] ? white : black;
 			((Uint32*)surf->pixels)[y * FONT_WIDTH + x] = color;
 		}
@@ -21,11 +25,12 @@ SDL_Texture* load_font(SDL_Renderer* renderer) {
 	return tx;
 }
 void draw_char(SDL_Renderer* renderer, SDL_Texture* font_tex, unsigned char character, int cx, int cy, int scale) {
-
+	//find right character in map
 	SDL_Point cell = {
 		(character - 32) % (FONT_WIDTH / GLYPH_WIDTH),
 		(character - 32) / (FONT_WIDTH / GLYPH_WIDTH) };
 
+	//define rects
 	SDL_Rect srcrect = {
 		cell.x * GLYPH_WIDTH,
 		cell.y * GLYPH_HEIGHT,

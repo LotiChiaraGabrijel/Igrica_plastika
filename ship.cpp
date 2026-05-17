@@ -15,6 +15,12 @@ void Ship::loadTexture() {
 	destRect.y = y;
 }
 
+void Ship::replay(struct position poz) {
+	x = poz.x;
+	y = poz.y;
+
+}
+
 void Ship::render() {
 	destRect.x = x;
 	destRect.y = y;

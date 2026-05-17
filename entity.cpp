@@ -10,6 +10,10 @@ void Entity::update(float deltaTime) {
 void Entity::render() {
 
 }
+ void Entity::replay(struct position poz) {
+
+}
+
 float Entity::get_x() {
 	return x;
 }

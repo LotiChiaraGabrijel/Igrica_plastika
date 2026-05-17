@@ -3,50 +3,116 @@
 #include <string>
 #include <cstring>
 using namespace std;
-//gameScreen.cpp
-GameScreen::GameScreen(SDL_Renderer* renderer, string name) {
+
+GameScreen::GameScreen(SDL_Renderer* renderer, string name, bool replay) {
+	//player
 	this->name = name;
 	player = new Player(renderer);
 	ship = new Ship(renderer);
 	player->loadTexture();
 	ship->loadTexture();
 	change = player;
-	score = 0;
 	onWater = false;
-	this->renderer = renderer;
-	level = 1;
 	wasOnWater = false;
+
+
+	//pause button
+	paused = false;
+	pause_button = { 940, 5, 64, 64 };
+	pause = IMG_LoadTexture(renderer, "slike/pause.png");
+
+	//game variables
+	level = 1;
 	game_time = 0;
-	font_tex = load_font(renderer);
-	surface = IMG_Load("slike/mask.png");
 	end = false;
 	win = false;
-	if (!surface) std::cout << IMG_GetError();
+	score = 0;
+	this->replay = replay;
+	replay_timer = 0;
+	replay_delay = 0;
+
+
+
+	//textures
+	this->renderer = renderer;
+	surface = IMG_Load("slike/mask.png");
+	font_tex = load_font(renderer);
 	background = IMG_LoadTexture(renderer, "slike/background.png");
+
+	//sprite initialization
 	trash_arr.resize(10);
 	enemy_arr.resize(10);
 	ally_arr.resize(5);
 	init_enemy_trash(renderer);
 	init_ally(renderer);
+	if (replay) {
+		replay_file.open("player_positions.bin", ios::binary);
+	}
+	else {
+		ofstream clear_file("player_positions.bin", ios::binary | ios::trunc);
+		clear_file.close();
+	}
 
 }
 
 bool GameScreen::handleEvents(SDL_Event& e) {
 	if (e.type == SDL_QUIT) return 0;
+
+	//pause button
+	if (e.type == SDL_MOUSEBUTTONDOWN) {
+		int mouseX = e.button.x;
+		int mouseY = e.button.y;
+
+		if (mouseX >= pause_button.x && mouseX <= pause_button.x + pause_button.w &&
+			mouseY >= pause_button.y && mouseY <= pause_button.y + pause_button.h) {
+			paused = !paused;
+		}
+	}
 	return 1;
+
 }
 void GameScreen::update(float deltaTime) {
-	game_time += deltaTime;
-	change->update(deltaTime);
-		//check enemy on water
-	update_enemy_trash( deltaTime);
-	update_ally( deltaTime);
-	update_player( deltaTime);
+	if (replay) {
+		replay_timer += deltaTime;
+
+		if (replay_timer >= replay_delay) {
+			replay_timer = 0;
+
+			position pos;
+			if (replay_file.read(reinterpret_cast<char*>(&pos), sizeof(pos))) {
+				replay_delay = pos.deltaTime;
+
+				if (pos.onWater) {
+					change = ship;
+					ship->replay(pos);
+				}
+				else {
+					change = player;
+					player->replay(pos);
+				}
+			}
+			else {
+				replay_file.close();
+				win = true;
+			}
+		}
+
+		return;
+	}
+
+	else {
+		change->update(deltaTime);
+		update_ally(deltaTime);
+		update_enemy_trash(deltaTime);
+		save_position(deltaTime);
+		update_player(deltaTime);
+	}
+
 	//next level when all enemies and trash are destroyed
 	if (trash_arr.empty() && enemy_arr.empty()) {
 		clear_level();
 
-		if (level == 1) {
+		if (level == 4 || end == true) {
 			win = true;
 			save_score();
 			return;
@@ -56,26 +122,21 @@ void GameScreen::update(float deltaTime) {
 }
 
 void GameScreen::update_player(float deltaTime) {
+	//handeling of killing sprites
 	int checkX, checkY;
 	checkX = change->get_x() + 50;
 	checkY = change->get_y() + 99;
 	if (is_on_water(checkX, checkY)) {
 		onWater = true; 
-			vector<Trash*>::iterator it;
-			for (it = trash_arr.begin(); it != trash_arr.end();)
-				if (change->check_collision((*it)->get_rect()) && (*it)->get_alive() == true) {
-					score += 10;
-					delete* it;
-					it = trash_arr.erase(it);
-				}
-				else
-					++it;
+		trash_pick_up();
 	}
 	else {
 		onWater = false;
 		enemy_collision_player();
 		ally_collision_player();
 	}
+
+	//changing the player sprite
 	if (onWater != wasOnWater) {
 		if (onWater == true) {
 
@@ -92,11 +153,23 @@ void GameScreen::update_player(float deltaTime) {
 	}
 }
 
+void GameScreen::trash_pick_up() {
+	vector<Trash*>::iterator it;
+	for (it = trash_arr.begin(); it != trash_arr.end();)
+		if (change->check_collision((*it)->get_rect())) {
+			score += 10;
+			delete* it;
+			it = trash_arr.erase(it);
+		}
+		else
+			++it;
+}
+
 void GameScreen::enemy_collision_player() {
 	vector<Enemy*>::iterator it;
 
 	for (it = enemy_arr.begin(); it != enemy_arr.end();)
-		if (change->check_collision((*it)->get_rect()) && (*it)->get_alive() == true) {
+		if (change->check_collision((*it)->get_rect())) {
 			if ((*it)->get_together() == true) {
 				end = true;
 				return;
@@ -112,11 +185,14 @@ void GameScreen::enemy_collision_player() {
 			++it;
 }
 void GameScreen:: ally_collision_player() {
-	for (vector<Ally*>::iterator it = ally_arr.begin(); it != ally_arr.end(); it++)
-		if (change->check_collision((*it)->get_rect()) && (*it)->get_alive() == true) {
+	for (vector<Ally*>::iterator it = ally_arr.begin(); it != ally_arr.end(); )
+		if (change->check_collision((*it)->get_rect())) {
 			score -= 10;
-			(*it)->set_alive(false);
+			delete* it;
+			it = ally_arr.erase(it);
 		}
+		else
+			++it;
 }
 
 
@@ -182,15 +258,10 @@ void GameScreen::update_enemy_trash(float deltaTime) {
 	for (vector<Enemy*>::iterator it = enemy_arr.begin(); it != enemy_arr.end(); it++) {
 		(*it)->set_together(false);
 	}
-	for (vector<Enemy*>::iterator it = enemy_arr.begin(); it != enemy_arr.end(); it++) {
-		(*it)->set_together(false);
-	}
 
 	for (vector<Enemy*>::iterator it = enemy_arr.begin(); it != enemy_arr.end(); it++) {
 		for (vector<Enemy*>::iterator it2 = it + 1; it2 != enemy_arr.end(); it2++) {
-			if ((*it)->check_collision((*it2)->get_rect()) &&
-				(*it)->get_alive() == true &&
-				(*it2)->get_alive() == true) {
+			if ((*it)->check_collision((*it2)->get_rect())){
 
 				(*it)->set_together(true);
 				(*it2)->set_together(true);
@@ -205,36 +276,42 @@ void GameScreen::render(SDL_Renderer* renderer) {
 	destRect.x = 0;
 	destRect.y = 0;
 	SDL_RenderCopy(renderer, background, nullptr, &destRect);
+	SDL_RenderCopy(renderer, pause, nullptr, &pause_button);
+	
 	change->render();
-	for (vector<Enemy*>::iterator it = enemy_arr.begin(); it != enemy_arr.end(); it++)
-		(*it)->render();
-	for (vector<Trash*>::iterator it = trash_arr.begin(); it != trash_arr.end(); it++)
-		(*it)->render();
-	for (vector<Ally*>::iterator it = ally_arr.begin(); it != ally_arr.end(); it++)
-		(*it)->render();
+	if (!replay)
+	{
+		for (vector<Enemy*>::iterator it = enemy_arr.begin(); it != enemy_arr.end(); it++)
+			(*it)->render();
+		for (vector<Trash*>::iterator it = trash_arr.begin(); it != trash_arr.end(); it++)
+			(*it)->render();
+		for (vector<Ally*>::iterator it = ally_arr.begin(); it != ally_arr.end(); it++)
+			(*it)->render();
+	}
 
-
-
-	destRect.w = 500;
-	destRect.h = 500;
-	destRect.x = 96;
-	destRect.y = 96;
 	draw_score_level_time(renderer);
 
 }
 
 bool GameScreen::is_on_water(int x, int y) {
+	//checking that x,y are in range
 	if (x < 0) x = 0;
 	else if (x > surface->w) x = surface->w - 1;
 	if (y < 0) y = 0;
 	else if (y > surface->h) y = surface->h - 1;
+	//getting the surface pixels
 	Uint8* pixels = (Uint8*)surface->pixels;
+	//the number of bytes per row
 	int pitch = surface->pitch;
+	//how many bytes one pixel has
 	int bytesPerPixel = surface->format->BytesPerPixel;
+	//calculating the position of the pixel
 	Uint8* pixelAddr = pixels + y * pitch + x * bytesPerPixel;
+	//getting the color of the pixel
 	Uint32 pixel = *(Uint32*)pixelAddr;
 	Uint8 r, g, b;
 	SDL_GetRGB(pixel, surface->format, &r, &g, &b);
+	//returning if on water or not
 	if (r < 50) return 1;
 	else return 0;
 
@@ -242,7 +319,7 @@ bool GameScreen::is_on_water(int x, int y) {
 
 
 void GameScreen::draw_score_level_time(SDL_Renderer* renderer) {
-	std::string number;
+	string number;
 	if (score >= 100)
 		number = (score % 100) + (score % 10) + '0';
 	else
@@ -325,30 +402,56 @@ void GameScreen::clear_level() {
 	else if (game_time < 50) score += 150;
 	else if (game_time < 75) score += 50;
 }
+
 struct player_info {
 	char name_player[30];
 	int score_player;
 };
-void GameScreen::save_score() {
+void GameScreen::save_score() {/*
+	position f;
+	ifstream a("player_positions.dat", ios::binary);
+	while (a.read(reinterpret_cast<char*>(&f), sizeof(f))) {
+	}
+	a.close();*/
+
 	player_info info;
 	strncpy_s(info.name_player, sizeof(info.name_player), name.c_str(), _TRUNCATE);
 	info.score_player = score;
-	ofstream file("scores.dat", ios::binary | ios::app);
-	if (file.is_open()) {
-		file.write(reinterpret_cast<char*>(&info), sizeof(info));
-		file.close();
+	ofstream dat("scores.dat", ios::binary | ios::app);
+	if (dat.is_open()) {
+		dat.write((char*)(&info), sizeof(info));
+		dat.close();
 	}
 }
 
 bool GameScreen::get_win() {
+
 	return win;
 }
+
+void GameScreen::save_position(float deltaTime) {
+	ofstream file("player_positions.bin", ios::binary | ios::app);
+	position pos;
+	pos.x = change->get_rect().x;
+	pos.y = change->get_rect().y;
+	pos.onWater = onWater;
+	pos.deltaTime = deltaTime;
+
+	if (file.is_open()) {
+		file.write((char*)&pos, sizeof(pos));
+	}
+	file.close();
+
+}
+
+
+
 
 GameScreen::~GameScreen() {
 	delete ship;
 	delete player;
 	SDL_DestroyTexture(font_tex);
-
+	SDL_DestroyTexture(pause);
 	SDL_FreeSurface(surface);
 	SDL_DestroyTexture(background); 
 	for (vector<Trash*>::iterator it = trash_arr.begin(); it != trash_arr.end();) {
@@ -365,6 +468,5 @@ GameScreen::~GameScreen() {
 		delete* it;
 		it = ally_arr.erase(it);
 	}
-
 
 }

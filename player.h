@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL.h>
 #include "entity.h"
+
 class Player : public Entity {
 	SDL_Texture* texture;
 	SDL_Renderer* renderer;
@@ -10,6 +11,6 @@ public:
 	void update(float deltaTime) override;
 	void render() override;
 	void loadTexture();
-
+	void replay(struct position poz) override;
 
 };

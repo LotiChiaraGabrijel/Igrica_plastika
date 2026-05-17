@@ -1,5 +1,12 @@
 #pragma once
 #include <SDL.h>
+struct position {
+	float x;
+	float y;
+	bool onWater;
+	float deltaTime;
+
+};
 class Entity {
 protected:
 	SDL_Rect destRect;
@@ -10,6 +17,7 @@ public:
 	void move();
 	virtual void update(float deltaTime);
 	virtual void render();
+	virtual void replay(struct position poz);
 	float get_x();
 	float get_y();
 	void set_x(float newX);

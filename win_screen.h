@@ -11,6 +11,12 @@ class WinScreen : public Screen {
 	SDL_Rect destRect;
 	SDL_Texture* background;
 	SDL_Texture* font_tex;
+	bool reset;
+	bool replay;
+	SDL_Rect reset_button;
+	SDL_Texture* reset_tex;
+	SDL_Rect replay_button;
+	SDL_Texture* replay_tex;
 
 public:
 	WinScreen(SDL_Renderer*);
@@ -19,5 +25,9 @@ public:
 	void display_score(SDL_Renderer* renderer);
 	void render(SDL_Renderer* renderer) override;
 	bool is_in_vector(char name[30], std::vector<const char*>);
+	bool get_reset();
+	bool get_replay();
+
+
 	~WinScreen();
 };
