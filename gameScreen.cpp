@@ -115,7 +115,7 @@ void GameScreen::update(float deltaTime) {
 	if (trash_arr.empty() && enemy_arr.empty()) {
 		clear_level();
 
-		if (level == 1 || end == true) {
+		if (level == 3 || end == true) {
 			win = true;
 			save_score();
 			return;
@@ -221,7 +221,10 @@ void GameScreen::update_enemy_trash(float deltaTime) {
 	for (vector<Enemy*>::iterator it = enemy_arr.begin(); it != enemy_arr.end(); it++) {
 		float oldX = (*it)->get_x(),
 			oldY = (*it)->get_y();
-		(*it)->update(deltaTime);
+		if ((*it)->get_follow() && !onWater)
+			(*it)->follow(change->get_rect().x, change->get_rect().y, deltaTime);
+		else
+			(*it)->update(deltaTime);
 
 		int checkX = (*it)->get_x();
 		int checkY = (*it)->get_y();

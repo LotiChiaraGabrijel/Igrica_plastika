@@ -15,6 +15,10 @@ Enemy::Enemy(SDL_Renderer* rend, SDL_Surface* surface) {
 	xdir = 1;
 	ydir = 1;
 	this->mask_surface = surface;
+	if (rand() % 5 == 1)
+		following = true;
+	else
+		following = false;
 }
 
 void Enemy::loadTexture() {
@@ -23,10 +27,13 @@ void Enemy::loadTexture() {
 }
 
 void Enemy::update(float deltaTime) {
+	
 	int dir = rand() % 600;
-	if (dir == 1) xdir = !xdir;
+	if (dir == 1) 
+		xdir = !xdir;
 	dir = rand() % 600;
-	if (dir == 1) ydir = !ydir;
+	if (dir == 1) 
+		ydir = !ydir;
 	if (xdir == 1)
 		x += deltaTime * speed;
 	else
@@ -40,7 +47,16 @@ void Enemy::update(float deltaTime) {
 	if (x > 950) x = 950;
 	if (y < 0) y = 0;
 }
-
+void Enemy::follow(float a, float b, float deltaTime) {
+	if (a - x <= 0) 
+		x -= deltaTime * speed;
+	else 
+		x += deltaTime * speed;
+	if (b - y <= 0)
+		y -= deltaTime * speed;
+	else
+		y += deltaTime * speed;
+}
 void Enemy::render() {
 	if (visible == true) {
 		destRect.x = x;
@@ -56,6 +72,7 @@ bool Enemy::get_together() {
 }
 
 
+
 void Enemy::change_dir() {
 	ydir = !ydir;
 	xdir = !xdir;
@@ -67,7 +84,9 @@ Enemy::~Enemy() {
 		SDL_DestroyTexture(texture);
 }
 
-
+bool Enemy::get_follow() {
+	return following;
+}
 
 bool Enemy::is_in_radius(SDL_Rect rect) {
 	int playerCenterX = rect.x + rect.w / 2;
