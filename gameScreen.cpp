@@ -46,10 +46,10 @@ GameScreen::GameScreen(SDL_Renderer* renderer, string name, bool replay) {
 	init_enemy_trash(renderer);
 	init_ally(renderer);
 	if (replay) {
-		replay_file.open("player_positions.bin", ios::binary);
+		replay_file.open("player_positions.txt");
 	}
 	else {
-		ofstream clear_file("player_positions.bin", ios::binary | ios::trunc);
+		ofstream clear_file("player_positions.txt",  ios::trunc);
 		clear_file.close();
 	}
 
@@ -77,18 +77,19 @@ void GameScreen::update(float deltaTime) {
 
 		if (replay_timer >= replay_delay) {
 			replay_timer = 0;
+			float x, y, deltaTime;
+			bool water;
 
-			position pos;
-			if (replay_file.read(reinterpret_cast<char*>(&pos), sizeof(pos))) {
-				replay_delay = pos.deltaTime;
+			if (replay_file >> x >> y >> water >> deltaTime) {
+				replay_delay = deltaTime;
 
-				if (pos.onWater) {
+				if (water) {
 					change = ship;
-					ship->replay(pos);
+					ship->replay(x,y);
 				}
 				else {
 					change = player;
-					player->replay(pos);
+					player->replay(x,y);
 				}
 			}
 			else {
@@ -100,7 +101,9 @@ void GameScreen::update(float deltaTime) {
 		return;
 	}
 
-	else {
+
+	else if (!paused) {
+		game_time += deltaTime;
 		change->update(deltaTime);
 		update_ally(deltaTime);
 		update_enemy_trash(deltaTime);
@@ -112,7 +115,7 @@ void GameScreen::update(float deltaTime) {
 	if (trash_arr.empty() && enemy_arr.empty()) {
 		clear_level();
 
-		if (level == 4 || end == true) {
+		if (level == 1 || end == true) {
 			win = true;
 			save_score();
 			return;
@@ -430,15 +433,13 @@ bool GameScreen::get_win() {
 }
 
 void GameScreen::save_position(float deltaTime) {
-	ofstream file("player_positions.bin", ios::binary | ios::app);
-	position pos;
-	pos.x = change->get_rect().x;
-	pos.y = change->get_rect().y;
-	pos.onWater = onWater;
-	pos.deltaTime = deltaTime;
+	ofstream file("player_positions.txt", ios::app);
+	float x = change->get_rect().x,
+	y = change->get_rect().y;
+
 
 	if (file.is_open()) {
-		file.write((char*)&pos, sizeof(pos));
+		file << x << " " << y << " " << onWater << " " << deltaTime <<endl;
 	}
 	file.close();
 

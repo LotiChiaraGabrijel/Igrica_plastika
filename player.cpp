@@ -25,9 +25,9 @@ void Player::loadTexture() {
 
 
 }
-void Player::replay(struct position poz) {
-	x = poz.x;
-	y = poz.y;
+void Player::replay(float a, float b) {
+	x = a;
+	y = b;
 
 }
 void Player::update(float deltaTime) {

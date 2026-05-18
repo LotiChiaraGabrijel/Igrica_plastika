@@ -22,12 +22,12 @@ public:
 	WinScreen(SDL_Renderer*);
 	bool handleEvents(SDL_Event& e) override;
 	void update(float deltaTime) override;
+	void sort_scores_file();
 	void display_score(SDL_Renderer* renderer);
 	void render(SDL_Renderer* renderer) override;
-	bool is_in_vector(char name[30], std::vector<const char*>);
 	bool get_reset();
 	bool get_replay();
-
+	bool is_in_vector(char name[30], std::vector<const char*> vec);
 
 	~WinScreen();
 };

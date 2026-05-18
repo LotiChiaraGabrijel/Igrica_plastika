@@ -15,9 +15,9 @@ void Ship::loadTexture() {
 	destRect.y = y;
 }
 
-void Ship::replay(struct position poz) {
-	x = poz.x;
-	y = poz.y;
+void Ship::replay(float a, float b) {
+	x = a;
+	y = b;
 
 }
 

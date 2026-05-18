@@ -14,7 +14,8 @@ public:
 	void update(float deltaTime);
 	void render();
 	void loadTexture();
-	void replay(struct position poz) override;
+	void replay(float a, float b) override;
+
 
 
 };
